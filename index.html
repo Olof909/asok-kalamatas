@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ΑΣΟΚ — Αθλητικός Σκοπευτικός Όμιλος Καλαμάτας</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: #111b2e;
+    color: #f0ead8;
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+  }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #111b2e; }
+  ::-webkit-scrollbar-thumb { background: #c8a030; border-radius: 3px; }
+
+  /* Hero background animations */
+  @keyframes heroKenBurns {
+    0%   { transform: scale(1.05) translate(0, 0); }
+    50%  { transform: scale(1.18) translate(-1.5%, -1%); }
+    100% { transform: scale(1.05) translate(0, 0); }
+  }
+  @keyframes heroGradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  @keyframes heroReticleSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes heroParticleFloat {
+    0%   { transform: translateY(0) translateX(0); opacity: 0; }
+    10%  { opacity: 0.5; }
+    90%  { opacity: 0.5; }
+    100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+  }
+  .hero-bg-image {
+    animation: heroKenBurns 28s ease-in-out infinite;
+    will-change: transform;
+  }
+  .hero-bg-overlay {
+    background: linear-gradient(105deg, rgba(17,27,46,0.92) 30%, rgba(17,27,46,0.45) 70%, rgba(212,169,58,0.08) 100%);
+    background-size: 200% 200%;
+    animation: heroGradientShift 18s ease-in-out infinite;
+  }
+  .hero-reticle-spin {
+    animation: heroReticleSpin 60s linear infinite;
+  }
+  .hero-particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: rgba(212,169,58,0.55);
+    border-radius: 50%;
+    bottom: -10px;
+    pointer-events: none;
+    animation: heroParticleFloat linear infinite;
+  }
+
+  /* ── Mobile-toggle defaults (hidden on desktop) ── */
+  .nav-mobile-toggle { display: none; }
+  .nav-mobile-menu { display: none; }
+
+  /* ── Tablet & mobile ≤ 900px ── */
+  @media (max-width: 900px) {
+    .nav-desktop-links { display: none !important; }
+    .nav-cta-desktop { display: none !important; }
+    .nav-mobile-toggle { display: flex !important; }
+
+    .grid-2col { grid-template-columns: 1fr !important; }
+    .grid-3col-photos { grid-template-columns: 1fr 1fr !important; }
+    .footer-grid { grid-template-columns: 1fr !important; gap: 36px !important; }
+    .ann-row { grid-template-columns: 1fr !important; gap: 14px !important; padding: 28px 24px !important; }
+
+    .hero-stats { gap: 36px !important; flex-wrap: wrap; }
+    .hero-reticle-spin { opacity: 0.35 !important; right: -25% !important; }
+    .hero-padding { padding: 88px clamp(20px,6vw,40px) 56px !important; }
+  }
+
+  /* ── Mobile ≤ 640px ── */
+  @media (max-width: 640px) {
+    .grid-3col-photos { grid-template-columns: 1fr !important; }
+    .gallery-grid { grid-template-columns: 1fr !important; }
+    .gallery-grid > * { grid-column: auto !important; }
+    .stats-3col { grid-template-columns: 1fr 1fr !important; }
+
+    .hero-stats { gap: 24px !important; }
+    .hero-buttons { flex-direction: column !important; align-items: stretch !important; }
+    .hero-buttons > * { width: 100% !important; text-align: center; }
+    .hero-padding { padding: 80px 20px 48px !important; }
+    .hero-reticle-spin { display: none !important; }
+
+    .section-padding { padding-left: 20px !important; padding-right: 20px !important; }
+    .footer-bottom { flex-direction: column !important; gap: 16px !important; align-items: flex-start !important; }
+    .contact-cta { flex-direction: column !important; align-items: flex-start !important; gap: 18px !important; padding: 24px 22px !important; }
+  }
+
+  /* ── Mobile menu overlay ── */
+  .nav-mobile-menu.is-open {
+    display: flex !important;
+    position: fixed; top: 72px; left: 0; right: 0; bottom: 0; z-index: 99;
+    background: rgba(17,27,46,0.98);
+    backdrop-filter: blur(18px);
+    flex-direction: column;
+    padding: 32px 28px;
+    gap: 4px;
+    animation: heroGradientShift 1s ease-out;
+  }
+  .nav-mobile-menu.is-open .nav-mobile-link {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 0.08em;
+    color: #f4efe3;
+    padding: 18px 4px;
+    border-bottom: 1px solid rgba(212,169,58,0.18);
+    cursor: pointer;
+  }
+  .nav-mobile-menu.is-open .nav-mobile-link.active { color: #d4a93a; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+// ── Colors ────────────────────────────────────────────────────────
+const C = {
+  bg:       "#111b2e",
+  bg2:      "#172035",
+  bg3:      "#1e2d45",
+  gold:     "#d4a93a",
+  goldDim:  "rgba(212,169,58,0.18)",
+  white:    "#f4efe3",
+  mid:      "rgba(244,239,227,0.72)",
+  dim:      "rgba(244,239,227,0.42)",
+  border:   "rgba(212,169,58,0.18)",
+};
+
+// ── Photos ────────────────────────────────────────────────────────
+const PHOTOS = {
+  team:     "uploads/660382128_1458442075977790_4267698106050903520_n.jpg",
+  podium:   "uploads/658150805_1458442105977787_994430311091057490_n.jpg",
+  facility: "uploads/475674248_1130037335484934_5739089800326555547_n.jpg",
+  poster1:  "uploads/656416811_1453504383138226_301068151431856087_n.jpg",
+  poster2:  "uploads/658700724_1455300156291982_1557183907099408215_n.jpg",
+  logo:     "uploads/pasted-1777711422017-0.png",
+};
+
+// ── Lightbox ──────────────────────────────────────────────────────
+function Lightbox({ src, label, onClose }) {
+  useEffect(() => {
+    const onKey = e => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+  return (
+    <div onClick={onClose} style={{
+      position: "fixed", inset: 0, zIndex: 999,
+      background: "rgba(8,12,22,0.96)",
+      display: "flex", flexDirection: "column",
+      alignItems: "center", justifyContent: "center",
+      cursor: "zoom-out",
+    }}>
+      <button onClick={onClose} style={{
+        position: "fixed", top: 24, right: 28,
+        background: "transparent", border: "1px solid rgba(212,169,58,0.4)",
+        color: "#d4a93a", fontFamily: "'Bebas Neue'", fontSize: 18,
+        letterSpacing: "0.1em", padding: "7px 18px", cursor: "pointer", zIndex: 1000,
+      }}>ΚΛΕΙΣΙΜΟ ✕</button>
+      <img src={src} alt={label} onClick={e => e.stopPropagation()} style={{
+        maxWidth: "90vw", maxHeight: "85vh", objectFit: "contain", display: "block",
+        boxShadow: "0 24px 80px rgba(0,0,0,0.7)", cursor: "default",
+      }} />
+      {label && (
+        <div style={{ marginTop: 16, fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(212,169,58,0.8)", fontFamily: "'Space Grotesk'" }}>{label}</div>
+      )}
+    </div>
+  );
+}
+
+// ── Clickable Photo ───────────────────────────────────────────────
+function Photo({ src, pos = "center center", label, height, style = {}, openLightbox }) {
+  const [hovered, setHovered] = React.useState(false);
+  return (
+    <div style={{ height, overflow: "hidden", position: "relative", cursor: "zoom-in", flexShrink: 0, ...style }}
+      onClick={() => openLightbox(src, label)}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}>
+      <img src={src} alt={label} style={{
+        width: "100%", height: "100%", objectFit: "cover",
+        objectPosition: pos, display: "block",
+        transition: "transform 0.5s",
+        transform: hovered ? "scale(1.04)" : "scale(1)",
+      }} />
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0,
+        padding: "40px 20px 14px",
+        background: "linear-gradient(transparent, rgba(17,27,46,0.78))",
+      }}>
+        <div style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "rgba(244,239,227,0.7)" }}>{label}</div>
+      </div>
+      <div style={{
+        position: "absolute", top: 12, right: 12,
+        background: "rgba(17,27,46,0.75)", border: "1px solid rgba(212,169,58,0.35)",
+        borderRadius: 2, padding: "4px 8px",
+        fontSize: 9, letterSpacing: "0.12em", color: "rgba(212,169,58,0.8)",
+        opacity: hovered ? 1 : 0, transition: "opacity 0.2s",
+      }}>⊕ ZOOM</div>
+    </div>
+  );
+}
+
+// ── Reticle ───────────────────────────────────────────────────────
+function Reticle({ size = 400, opacity = 0.07, style = {} }) {
+  const r = size / 2;
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}
+      fill="none" stroke={C.gold} strokeWidth="1"
+      style={{ position: "absolute", pointerEvents: "none", opacity, ...style }}>
+      <circle cx={r} cy={r} r={r * 0.92} />
+      <circle cx={r} cy={r} r={r * 0.66} />
+      <circle cx={r} cy={r} r={r * 0.4} />
+      <circle cx={r} cy={r} r={r * 0.13} />
+      <line x1={r} y1={0}    x2={r}    y2={r * 0.85} />
+      <line x1={r} y1={r * 1.15} x2={r} y2={size} />
+      <line x1={0}    y1={r} x2={r * 0.85} y2={r} />
+      <line x1={r * 1.15} y1={r} x2={size} y2={r} />
+    </svg>
+  );
+}
+
+// ── Nav ───────────────────────────────────────────────────────────
+function Nav({ page, setPage }) {
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const links = [
+    ["home","ΑΡΧΙΚΗ"],["about","ΣΥΛΛΟΓΟΣ"],["gallery","GALLERY"],
+    ["announcements","ΑΝΑΚΟΙΝΩΣΕΙΣ"],["training","ΠΡΟΓΡΑΜΜΑ"]
+  ];
+
+  return (
+    <nav style={{
+      position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
+      height: 72,
+      background: scrolled ? "rgba(17,27,46,0.97)" : "rgba(17,27,46,0.85)",
+      borderBottom: `1px solid ${scrolled ? C.border : "transparent"}`,
+      backdropFilter: "blur(12px)",
+      display: "flex", alignItems: "center",
+      justifyContent: "space-between",
+      padding: "0 clamp(20px, 5vw, 72px)",
+      transition: "all 0.3s",
+    }}>
+      {/* Logo */}
+      <div style={{ display: "flex", alignItems: "center", gap: 12, cursor: "pointer" }}
+           onClick={() => setPage("home")}>
+        <img src={PHOTOS.logo} alt="ΑΣΟΚ"
+          style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", border: `1.5px solid ${C.gold}` }} />
+        <div>
+          <div style={{ fontFamily: "'Bebas Neue'", fontSize: 19, letterSpacing: "0.16em", color: C.gold, lineHeight: 1 }}>ΑΣΟΚ</div>
+          <div style={{ fontSize: 8, letterSpacing: "0.14em", textTransform: "uppercase", color: C.dim, lineHeight: 1.2 }}>Καλαμάτα · 1959</div>
+        </div>
+      </div>
+
+      {/* Desktop links */}
+      <div className="nav-desktop-links" style={{ display: "flex", gap: 32, fontSize: 11, fontWeight: 500, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+        {links.map(([k, l]) => (
+          <span key={k} onClick={() => setPage(k)} style={{
+            cursor: "pointer",
+            color: page === k ? C.gold : C.mid,
+            borderBottom: page === k ? `1px solid ${C.gold}` : "1px solid transparent",
+            paddingBottom: 2,
+            transition: "color 0.2s",
+          }}>{l}</span>
+        ))}
+      </div>
+
+      {/* CTA (desktop only) */}
+      <div className="nav-cta-desktop" onClick={() => setPage("announcements")} style={{
+        fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase",
+        padding: "9px 22px", border: `1px solid ${C.gold}`, color: C.gold,
+        cursor: "pointer", transition: "all 0.2s",
+      }}
+        onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.color = C.bg; }}
+        onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.gold; }}>
+        ΑΝΑΚΟΙΝΩΣΕΙΣ →
+      </div>
+
+      {/* Mobile hamburger toggle */}
+      <div className="nav-mobile-toggle" onClick={() => setMenuOpen(!menuOpen)} style={{
+        width: 44, height: 44, alignItems: "center", justifyContent: "center",
+        cursor: "pointer", border: `1px solid ${C.gold}`, color: C.gold,
+      }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 5, alignItems: "center", justifyContent: "center" }}>
+          <span style={{ display: "block", width: 18, height: 1.5, background: C.gold, transition: "transform 0.2s", transform: menuOpen ? "translateY(6.5px) rotate(45deg)" : "none" }} />
+          <span style={{ display: "block", width: 18, height: 1.5, background: C.gold, opacity: menuOpen ? 0 : 1, transition: "opacity 0.2s" }} />
+          <span style={{ display: "block", width: 18, height: 1.5, background: C.gold, transition: "transform 0.2s", transform: menuOpen ? "translateY(-6.5px) rotate(-45deg)" : "none" }} />
+        </div>
+      </div>
+
+      {/* Mobile fullscreen menu */}
+      <div className={`nav-mobile-menu ${menuOpen ? "is-open" : ""}`}>
+        {links.map(([k, l]) => (
+          <span key={k}
+            className={`nav-mobile-link ${page === k ? "active" : ""}`}
+            onClick={() => { setPage(k); setMenuOpen(false); }}>
+            {l}
+          </span>
+        ))}
+        <div style={{ marginTop: 24, fontFamily: "'Space Grotesk'", fontSize: 13, color: "rgba(244,239,227,0.5)" }}>
+          📞 697 216 9048
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+// ── HOME PAGE ─────────────────────────────────────────────────────
+function HomePage({ setPage, openLightbox }) {
+  return (
+    <div>
+      {/* Hero */}
+      <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", overflow: "hidden" }}>
+        {/* BG image (animated Ken Burns) */}
+        <div className="hero-bg-image" style={{
+          position: "absolute", inset: 0,
+          backgroundImage: `url(${PHOTOS.poster2})`,
+          backgroundSize: "cover", backgroundPosition: "center top",
+          filter: "brightness(0.22)",
+        }} />
+        {/* Animated gradient overlay */}
+        <div className="hero-bg-overlay" style={{ position: "absolute", inset: 0 }} />
+        {/* Floating gold particles */}
+        <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+          {Array.from({ length: 24 }).map((_, i) => (
+            <span key={i} className="hero-particle" style={{
+              left: `${(i * 4.17) % 100}%`,
+              animationDuration: `${14 + (i % 7) * 2.5}s`,
+              animationDelay: `${(i % 12) * -1.6}s`,
+              opacity: 0.4 + (i % 3) * 0.15,
+            }} />
+          ))}
+        </div>
+        <div className="hero-reticle-spin" style={{
+          position: "absolute", right: "5%", top: "50%",
+          width: 560, height: 560, marginTop: -280,
+        }}>
+          <Reticle size={560} opacity={0.08} style={{ inset: 0 }} />
+        </div>
+
+        <div className="hero-padding" style={{ position: "relative", zIndex: 2, padding: "100px clamp(24px,6vw,96px) 80px", maxWidth: 820 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.24em", color: C.gold, marginBottom: 20, textTransform: "uppercase" }}>
+            Καλαμάτα · Μεσσηνία · Est. 1959
+          </div>
+          <h1 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(48px,9vw,120px)", lineHeight: 0.88, letterSpacing: "0.02em", marginBottom: 28 }}>
+            <div>ΑΘΛΗΤΙΚΟΣ</div>
+            <div style={{ color: C.gold }}>ΣΚΟΠΕΥΤΙΚΟΣ</div>
+            <div>ΟΜΙΛΟΣ</div>
+          </h1>
+          <p style={{ fontFamily: "'Source Serif 4', serif", fontStyle: "italic", fontWeight: 300, fontSize: "clamp(16px,1.8vw,22px)", color: C.mid, marginBottom: 52, lineHeight: 1.55, maxWidth: 560 }}>
+            Shooting Club of Kalamata —<br />Champions of the Balkans since 1959.
+          </p>
+          <div className="hero-stats" style={{ display: "flex", gap: 64, marginBottom: 52, flexWrap: "wrap" }}>
+            {[["65+","Χρόνια"],["1959","Ίδρυση"],["Βαλκάνια","Διακρίσεις"]].map(([n, l]) => (
+              <div key={l}>
+                <div style={{ fontFamily: "'Bebas Neue'", fontSize: 48, color: C.gold, lineHeight: 1 }}>{n}</div>
+                <div style={{ fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: C.dim, marginTop: 5 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+          <div className="hero-buttons" style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+            <button onClick={() => setPage("announcements")} style={{
+              fontFamily: "'Bebas Neue'", fontSize: 20, letterSpacing: "0.1em",
+              padding: "14px 32px", background: C.gold, color: C.bg, border: "none", cursor: "pointer",
+              transition: "opacity 0.2s",
+            }}>ΑΝΑΚΟΙΝΩΣΕΙΣ →</button>
+            <button onClick={() => setPage("about")} style={{
+              fontFamily: "'Bebas Neue'", fontSize: 20, letterSpacing: "0.1em",
+              padding: "14px 32px", background: "transparent", color: C.white,
+              border: `1px solid rgba(244,239,227,0.25)`, cursor: "pointer",
+              transition: "border-color 0.2s",
+            }}>Ο ΣΥΛΛΟΓΟΣ</button>
+          </div>
+        </div>
+      </section>
+
+      {/* Photo strip */}
+      <section className="grid-3col-photos" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 3 }}>
+        {[
+          { src: PHOTOS.team,     pos: "center 40%", label: "Αθλητές στο σκοπευτήριο" },
+          { src: PHOTOS.podium,   pos: "center 25%", label: "Βραβεύσεις" },
+          { src: PHOTOS.facility, pos: "center center", label: "Σκοπευτήριο Καλαμάτας" },
+        ].map(({ src, pos, label }) => (
+          <Photo key={label} src={src} pos={pos} label={label} height="clamp(200px,22vw,340px)" openLightbox={openLightbox} />
+        ))}
+      </section>
+
+      {/* Video section */}
+      <section className="grid-2col" style={{ background: C.bg3, padding: "72px clamp(24px,6vw,96px)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(32px,5vw,72px)", alignItems: "center" }}>
+        <div>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.22em", color: C.gold, marginBottom: 16, textTransform: "uppercase" }}>Δείτε μας σε δράση</div>
+          <h2 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(36px,4.5vw,60px)", lineHeight: 0.95, marginBottom: 20 }}>
+            ΑΓΩΝΙΣΤΙΚΗ<br /><span style={{ color: C.gold }}>ΔΡΑΣΗ</span>
+          </h2>
+          <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 16, color: C.mid, lineHeight: 1.75 }}>
+            Παρακολουθήστε αθλητές του ΑΣΟΚ σε αγωνιστική δράση. Clay Target, Skeet &amp; Trap — η σκοποβολή στην καλύτερή της.
+          </p>
+        </div>
+        <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%", height: 0, overflow: "hidden", boxShadow: "0 16px 48px rgba(0,0,0,0.5)", border: `1px solid ${C.border}` }}>
+          <iframe
+            src="https://www.facebook.com/plugins/video.php?height=315&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1723089145739000%2F&show_text=false&width=560&t=0"
+            style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none" }}
+            scrolling="no"
+            frameBorder="0"
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            allowFullScreen={true}
+          />
+        </div>
+      </section>
+
+      {/* About teaser */}
+      <section className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3 }}>
+        <div style={{ background: C.bg2, padding: "clamp(36px,5vw,72px)" }}>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", color: C.gold, marginBottom: 16, textTransform: "uppercase" }}>Ο Σύλλογός μας</div>
+          <h2 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(36px,4vw,54px)", lineHeight: 1.0, marginBottom: 20 }}>ΠΑΡΑΔΟΣΗ &amp;<br />ΑΡΙΣΤΕΙΑ</h2>
+          <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 16, color: C.mid, lineHeight: 1.75, marginBottom: 28 }}>
+            Ιδρύθηκε το 1959, ο ΑΣΟΚ είναι ο κορυφαίος σκοπευτικός σύλλογος της Καλαμάτας. Με διακρίσεις σε Βαλκανικά πρωταθλήματα και δεκαετίες αφοσίωσης στον αθλητισμό, εκπαιδεύουμε τους σκοπευτές του αύριο.
+          </p>
+          <span onClick={() => setPage("about")} style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase", color: C.gold, cursor: "pointer", borderBottom: `1px solid ${C.gold}`, paddingBottom: 2 }}>
+            ΠΕΡΙΣΣΟΤΕΡΑ →
+          </span>
+        </div>
+        <div style={{ background: C.bg3, padding: "clamp(36px,5vw,72px)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.2em", color: C.gold, marginBottom: 20, textTransform: "uppercase" }}>Κλάδοι Αθλήματος</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {[
+              ["Clay Target", "Skeet & Trap — διεθνείς διακρίσεις"],
+              ["Compak Sporting", "Δυναμικός κλάδος — όλα τα επίπεδα"],
+            ].map(([t, d]) => (
+              <div key={t} style={{ display: "flex", gap: 16, alignItems: "flex-start", paddingBottom: 16, borderBottom: `1px solid ${C.border}` }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: C.gold, flexShrink: 0, marginTop: 6 }} />
+                <div>
+                  <div style={{ fontFamily: "'Bebas Neue'", fontSize: 22, letterSpacing: "0.06em", marginBottom: 2 }}>{t}</div>
+                  <div style={{ fontFamily: "'Source Serif 4', serif", fontSize: 14, color: C.mid }}>{d}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Map / Location */}
+      <section className="section-padding" style={{ background: C.bg2, padding: "72px clamp(24px,6vw,96px)" }}>
+        <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(32px,5vw,64px)", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.22em", color: C.gold, marginBottom: 16, textTransform: "uppercase" }}>Τοποθεσία</div>
+            <h2 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(36px,4.5vw,60px)", lineHeight: 0.95, marginBottom: 20 }}>
+              ΣΚΟΠΕΥΤΗΡΙΟ<br /><span style={{ color: C.gold }}>ΚΑΛΑΜΑΤΑΣ</span>
+            </h2>
+            <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 16, color: C.mid, lineHeight: 1.75, marginBottom: 28 }}>
+              Επισκεφθείτε το σκοπευτήριό μας στην Καλαμάτα. Σύγχρονες εγκαταστάσεις για Skeet, Trap και Compak Sporting.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 28 }}>
+              <div style={{ fontFamily: "'Space Grotesk'", fontSize: 14, color: C.mid }}>📞 697 216 9048</div>
+              <a href="https://maps.app.goo.gl/Hu9ViCuN1YeuXRRh7" target="_blank" rel="noopener noreferrer"
+                style={{ fontFamily: "'Space Grotesk'", fontSize: 14, color: C.gold, textDecoration: "none" }}>📍 Άνοιγμα στο Google Maps →</a>
+            </div>
+          </div>
+          <div style={{ position: "relative", width: "100%", paddingBottom: "56.25%", height: 0, overflow: "hidden", boxShadow: "0 16px 48px rgba(0,0,0,0.5)", border: `1px solid ${C.border}` }}>
+            <iframe
+              src="https://maps.google.com/maps?q=37.0564327,22.1261613&hl=el&z=15&output=embed"
+              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", border: "none", filter: "grayscale(0.3) contrast(1.05)" }}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen={true}
+              title="Σκοπευτήριο Καλαμάτας — Google Maps"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <Footer setPage={setPage} />
+    </div>
+  );
+}
+
+// ── ABOUT PAGE ────────────────────────────────────────────────────
+function AboutPage({ openLightbox }) {
+  return (
+    <div style={{ paddingTop: 72 }}>
+      {/* Header */}
+      <div style={{ position: "relative", background: C.bg2, padding: "80px clamp(24px,6vw,96px) 64px", overflow: "hidden" }}>
+        <Reticle size={400} opacity={0.06} style={{ right: -60, top: -80 }} />
+        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.22em", color: C.gold, marginBottom: 16, textTransform: "uppercase" }}>Σχετικά με μας</div>
+        <h1 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(52px,7vw,88px)", lineHeight: 0.92, marginBottom: 0 }}>
+          Η ΙΣΤΟΡΙΑ<br /><span style={{ color: C.gold }}>ΤΟΥ ΑΣΟΚ</span>
+        </h1>
+      </div>
+
+      {/* Content */}
+      <div className="grid-2col section-padding" style={{ padding: "72px clamp(24px,6vw,96px)", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(32px,5vw,72px)", alignItems: "start" }}>
+        <div>
+          <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 17, color: C.mid, lineHeight: 1.85, marginBottom: 24 }}>
+            Ο Αθλητικός Σκοπευτικός Όμιλος Καλαμάτας ιδρύθηκε το <strong style={{ color: C.gold }}>1959</strong> με στόχο την ανάπτυξη και προώθηση της σκοποβολής στη Μεσσηνία.
+          </p>
+          <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 17, color: C.mid, lineHeight: 1.85, marginBottom: 24 }}>
+            Με συμμετοχές και νίκες σε <strong style={{ color: C.white }}>Βαλκανικά Πρωταθλήματα</strong>, ο σύλλογος έχει αναδείξει αθλητές υψηλού επιπέδου και συνεχίζει να αποτελεί πυλώνα του αθλητισμού στην Καλαμάτα.
+          </p>
+          <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 17, color: C.mid, lineHeight: 1.85 }}>
+            Σήμερα δραστηριοποιούμαστε στους κλάδους του <strong style={{ color: C.white }}>Clay Target (Skeet & Trap)</strong> και του <strong style={{ color: C.white }}>Compak Sporting</strong>, καλωσορίζοντας αθλητές κάθε επιπέδου.
+          </p>
+
+          {/* Stats */}
+          <div className="stats-3col" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 3, marginTop: 40 }}>
+            {[["1959","Ίδρυση"],["65+","Χρόνια"],["Βαλκάνια","Πρωτιές"]].map(([n, l]) => (
+              <div key={l} style={{ background: C.bg2, padding: "22px 18px", borderTop: `2px solid ${C.gold}` }}>
+                <div style={{ fontFamily: "'Bebas Neue'", fontSize: 34, color: C.gold, lineHeight: 1 }}>{n}</div>
+                <div style={{ fontSize: 9, letterSpacing: "0.14em", textTransform: "uppercase", color: C.dim, marginTop: 4 }}>{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <Photo src={PHOTOS.facility} pos="center center" label="Σκοπευτήριο Καλαμάτας" height={300} openLightbox={openLightbox} />
+          <Photo src={PHOTOS.podium} pos="center 25%" label="Βραβεύσεις" height={240} openLightbox={openLightbox} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── GALLERY PAGE ──────────────────────────────────────────────────
+function GalleryPage({ openLightbox }) {
+  const images = [
+    { src: PHOTOS.team,     pos: "center 40%", label: "Αθλητές στο Σκοπευτήριο", span: 2 },
+    { src: PHOTOS.podium,   pos: "center 25%", label: "Βραβεύσεις" },
+    { src: PHOTOS.facility, pos: "center center", label: "Αεροφωτογραφία Σκοπευτηρίου" },
+    { src: PHOTOS.poster1,  pos: "center top", label: "Αγώνας Trap 50 Στόχων" },
+    { src: PHOTOS.poster2,  pos: "center top", label: "Compak Sporting 100 Στόχων" },
+  ];
+
+  return (
+    <div style={{ paddingTop: 72 }}>
+      <div style={{ background: C.bg2, padding: "80px clamp(24px,6vw,96px) 64px", position: "relative", overflow: "hidden" }}>
+        <Reticle size={360} opacity={0.06} style={{ right: 0, top: -40 }} />
+        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.22em", color: C.gold, marginBottom: 16, textTransform: "uppercase" }}>Gallery</div>
+        <h1 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(52px,7vw,88px)", lineHeight: 0.92 }}>ΦΩΤΟΓΡΑΦΙΕΣ</h1>
+      </div>
+
+      <div className="gallery-grid" style={{ padding: "3px", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gridTemplateRows: "auto", gap: 3 }}>
+        <Photo src={images[0].src} pos={images[0].pos} label={images[0].label} height={420} openLightbox={openLightbox} style={{ gridColumn: "1/3" }} />
+        <Photo src={images[1].src} pos={images[1].pos} label={images[1].label} height={420} openLightbox={openLightbox} />
+        {images.slice(2).map(img => (
+          <Photo key={img.label} src={img.src} pos={img.pos} label={img.label} height={320} openLightbox={openLightbox} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── ANNOUNCEMENTS PAGE ────────────────────────────────────────────
+function AnnouncementsPage() {
+  const announcements = [
+    {
+      date: "22 Απριλίου 2026",
+      tag: "Αγώνας",
+      title: "Ακύρωση Διασυλλογικού Αγώνα Compak Sporting",
+      body: "Σας ενημερώνουμε ότι ο προγραμματισμένος διασυλλογικός αγώνας Compak Sporting της Κυριακής 3ης Μαΐου 2026 ακυρώνεται. Ζητούμε την κατανόησή σας και θα ακολουθήσει νέα ενημέρωση για τις επόμενες αγωνιστικές δραστηριότητες του Ομίλου.",
+    },
+    {
+      date: "17 Απριλίου 2026",
+      tag: "Πρόγραμμα",
+      title: "Ωράριο Λειτουργίας Σκοπευτηρίου",
+      body: "Το σκοπευτήριο θα είναι ανοιχτό: Τετάρτη 17:30–21:00, Σάββατο 17:30–21:00, Κυριακή 09:00–15:00. Σας περιμένουμε για προπόνηση και σκοποβολή σε ένα ασφαλές και οργανωμένο περιβάλλον.",
+    },
+    {
+      date: "9 Απριλίου 2026",
+      tag: "Πρόγραμμα",
+      title: "Λειτουργία Μεγάλου Σαββάτου",
+      body: "Το σκοπευτήριο θα είναι ανοιχτό το Μ. Σάββατο 09:00 με 14:00. Σας περιμένουμε.",
+    },
+    {
+      date: "7 Απριλίου 2026",
+      tag: "Πρόγραμμα",
+      title: "Πρόγραμμα Μεγάλης Εβδομάδας",
+      body: "Το σκοπευτήριο θα είναι ανοιχτό: Μεγάλη Τετάρτη 17:00–21:00 και Μεγάλη Πέμπτη 17:00–21:00. Σας περιμένουμε.",
+    },
+    {
+      date: "3 Απριλίου 2026",
+      tag: "Πρόγραμμα",
+      title: "Ανοιχτό Σκοπευτήριο 4–5 Απριλίου",
+      body: "Σάββατο 04/04 17:30–21:00 και Κυριακή 05/04 09:00–15:00 στο Σκοπευτήριο Καλαμάτας. Τηλ. 6972169048.",
+    },
+    {
+      date: "20 Μαρτίου 2026",
+      tag: "Πρόγραμμα",
+      title: "Λειτουργία Σαββατοκύριακου",
+      body: "Το σκοπευτήριο θα είναι ανοικτό το Σάββατο 17:30–19:00 και Κυριακή 09:00–15:00.",
+    },
+    {
+      date: "17 Μαρτίου 2026",
+      tag: "Πρόγραμμα",
+      title: "Προπόνηση Compak Sporting & Trap",
+      body: "Σας περιμένουμε για προπόνηση την Τετάρτη 18-03-2026 17:00–19:00 στο Compak Sporting και στο Trap.",
+    },
+    {
+      date: "15 Μαρτίου 2026",
+      tag: "Εκδήλωση",
+      title: "Προπόνηση με νέο σχήμα Ν.10",
+      body: "Σας περιμένουμε για προπόνηση 09:00–15:00 στο Compak Sporting και στο TRAP με το νέο σχήμα Ν.10.",
+    },
+  ];
+
+  const tagColors = {
+    "Αγώνας":   C.gold,
+    "Πρόγραμμα": "#6aabff",
+    "Διάκριση": "#7edc8f",
+    "Εκδήλωση": "#e07dd0",
+  };
+
+  return (
+    <div style={{ paddingTop: 72 }}>
+      {/* Header */}
+      <div style={{ position: "relative", background: C.bg2, padding: "80px clamp(24px,6vw,96px) 64px", overflow: "hidden" }}>
+        <Reticle size={360} opacity={0.06} style={{ right: 0, top: -40 }} />
+        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.22em", color: C.gold, marginBottom: 16, textTransform: "uppercase" }}>Νέα &amp; Ανακοινώσεις</div>
+        <h1 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(52px,7vw,88px)", lineHeight: 0.92 }}>
+          ΑΝΑΚΟΙ<span style={{ color: C.gold }}>ΝΩΣΕΙΣ</span>
+        </h1>
+      </div>
+
+      {/* List */}
+      <div className="section-padding" style={{ padding: "64px clamp(24px,6vw,96px)", display: "flex", flexDirection: "column", gap: 3 }}>
+        {announcements.map((a, i) => (
+          <div key={i} className="ann-row" style={{
+            background: C.bg2,
+            padding: "36px 40px",
+            display: "grid",
+            gridTemplateColumns: "180px 1fr",
+            gap: "clamp(20px,4vw,56px)",
+            alignItems: "start",
+            borderLeft: `3px solid ${tagColors[a.tag] || C.gold}`,
+            transition: "background 0.2s",
+          }}
+            onMouseEnter={e => e.currentTarget.style.background = C.bg3}
+            onMouseLeave={e => e.currentTarget.style.background = C.bg2}>
+            {/* Date + tag */}
+            <div>
+              <div style={{ fontFamily: "'Bebas Neue'", fontSize: 15, color: tagColors[a.tag] || C.gold, letterSpacing: "0.1em", marginBottom: 6 }}>{a.tag}</div>
+              <div style={{ fontFamily: "'Source Serif 4', serif", fontStyle: "italic", fontSize: 13, color: C.dim, lineHeight: 1.4 }}>{a.date}</div>
+            </div>
+            {/* Content */}
+            <div>
+              <h3 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(22px,2.5vw,30px)", letterSpacing: "0.04em", marginBottom: 12, lineHeight: 1.1 }}>{a.title}</h3>
+              <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 15, color: C.mid, lineHeight: 1.75 }}>{a.body}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Contact CTA */}
+      <div className="contact-cta" style={{ margin: "0 clamp(24px,6vw,96px) 72px", background: C.bg3, borderTop: `3px solid ${C.gold}`, padding: "32px 40px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
+        <div>
+          <div style={{ fontFamily: "'Bebas Neue'", fontSize: 22, marginBottom: 4 }}>ΕΠΙΚΟΙΝΩΝΙΑ &amp; ΠΛΗΡΟΦΟΡΙΕΣ</div>
+          <div style={{ fontFamily: "'Source Serif 4', serif", fontSize: 14, color: C.mid }}>Για περισσότερες πληροφορίες επικοινωνήστε μαζί μας.</div>
+        </div>
+        <div style={{ display: "flex", gap: 24, flexShrink: 0 }}>
+          <div style={{ fontSize: 13, color: C.mid, fontFamily: "'Space Grotesk'" }}>📞 697 216 9048</div>
+          <a href="https://www.facebook.com/athlitikosskopeutikosomiloskalamatas" target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: 13, color: C.gold, fontFamily: "'Space Grotesk'", textDecoration: "none" }}>Facebook →</a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── TRAINING PAGE ─────────────────────────────────────────────────
+function TrainingPage() {
+  const schedule = [
+    { day: "ΤΕΤΑΡΤΗ", en: "Wednesday", sessions: [
+      { t: "17:30–21:00", d: "Skeet, Trap & Compak Sporting", level: "All levels" },
+    ]},
+    { day: "ΣΑΒΒΑΤΟ", en: "Saturday", sessions: [
+      { t: "17:30–21:00", d: "Skeet, Trap & Compak Sporting", level: "All levels" },
+    ]},
+    { day: "ΚΥΡΙΑΚΗ", en: "Sunday", sessions: [
+      { t: "09:00–15:00", d: "Skeet, Trap & Compak Sporting", level: "All levels" },
+    ]},
+  ];
+
+  return (
+    <div style={{ paddingTop: 72 }}>
+      <div style={{ background: C.bg2, padding: "80px clamp(24px,6vw,96px) 64px", position: "relative", overflow: "hidden" }}>
+        <Reticle size={360} opacity={0.06} style={{ right: 0, top: -40 }} />
+        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.22em", color: C.gold, marginBottom: 16, textTransform: "uppercase" }}>Πρόγραμμα</div>
+        <h1 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(52px,7vw,88px)", lineHeight: 0.92 }}>
+          ΩΡΟΛΟΓΙΟ<br /><span style={{ color: C.gold }}>ΠΡΟΓΡΑΜΜΑ</span>
+        </h1>
+      </div>
+
+      <div style={{ padding: "72px clamp(24px,6vw,96px)" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px,1fr))", gap: 3 }}>
+          {schedule.map(({ day, en, sessions }) => (
+            <div key={day} style={{ background: C.bg2, padding: "32px 28px", borderTop: `3px solid ${C.gold}` }}>
+              <div style={{ fontFamily: "'Bebas Neue'", fontSize: 38, color: C.gold, lineHeight: 1 }}>{day}</div>
+              <div style={{ fontSize: 9, letterSpacing: "0.16em", textTransform: "uppercase", color: C.dim, marginBottom: 24 }}>{en}</div>
+              {sessions.map(s => (
+                <div key={s.t} style={{ marginBottom: 16, paddingBottom: 16, borderBottom: `1px solid ${C.border}` }}>
+                  <div style={{ fontFamily: "'Bebas Neue'", fontSize: 20, color: C.white, letterSpacing: "0.05em" }}>{s.t}</div>
+                  <div style={{ fontFamily: "'Source Serif 4', serif", fontSize: 14, color: C.mid, marginTop: 3 }}>{s.d}</div>
+                  <div style={{ fontSize: 9, letterSpacing: "0.12em", textTransform: "uppercase", color: C.gold, opacity: 0.75, marginTop: 4 }}>{s.level}</div>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* Note */}
+        <div style={{ background: C.bg2, borderLeft: `3px solid ${C.gold}`, padding: "20px 24px", marginTop: 3 }}>
+          <div style={{ fontFamily: "'Source Serif 4', serif", fontStyle: "italic", fontSize: 14, color: C.mid }}>
+            Για πληροφορίες και κρατήσεις επικοινωνήστε μαζί μας στο <strong style={{ color: C.white }}>697 216 9048</strong>.
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── FOOTER ────────────────────────────────────────────────────────
+function Footer({ setPage }) {
+  return (
+    <footer className="section-padding" style={{ background: "#0b1220", borderTop: `1px solid ${C.border}`, padding: "56px clamp(24px,6vw,96px) 32px" }}>
+      <div className="footer-grid" style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr", gap: 48, marginBottom: 48 }}>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+            <img src={PHOTOS.logo} alt="ΑΣΟΚ" style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "cover", border: `1px solid ${C.gold}` }} />
+            <div style={{ fontFamily: "'Bebas Neue'", fontSize: 18, letterSpacing: "0.14em", color: C.gold }}>ΑΣΟΚ</div>
+          </div>
+          <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 14, color: C.dim, lineHeight: 1.7, maxWidth: 300 }}>
+            Αθλητικός Σκοπευτικός Όμιλος Καλαμάτας. Ιδρύθηκε το 1959. Σκοπευτήριο Καλαμάτας, Μεσσηνία.
+          </p>
+        </div>
+        <div>
+          <div style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 16 }}>Σελίδες</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {[["home","Αρχική"],["about","Σύλλογος"],["gallery","Gallery"],["announcements","Ανακοινώσεις"],["training","Πρόγραμμα"]].map(([k,l]) => (
+              <span key={k} onClick={() => setPage(k)} style={{ fontFamily: "'Space Grotesk'", fontSize: 13, color: C.dim, cursor: "pointer", transition: "color 0.2s" }}
+                onMouseEnter={e => e.currentTarget.style.color = C.gold}
+                onMouseLeave={e => e.currentTarget.style.color = C.dim}>{l}</span>
+            ))}
+          </div>
+        </div>
+        <div>
+          <div style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 16 }}>Επικοινωνία</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <span style={{ fontFamily: "'Space Grotesk'", fontSize: 13, color: C.dim }}>📞 697 216 9048</span>
+            <span style={{ fontFamily: "'Space Grotesk'", fontSize: 13, color: C.dim }}>📍 Σκοπευτήριο Καλαμάτας</span>
+            <a href="https://www.facebook.com/athlitikosskopeutikosomiloskalamatas" target="_blank" rel="noopener noreferrer"
+              style={{ fontFamily: "'Space Grotesk'", fontSize: 13, color: C.dim, textDecoration: "none", transition: "color 0.2s" }}
+              onMouseEnter={e => e.currentTarget.style.color = C.gold}
+              onMouseLeave={e => e.currentTarget.style.color = C.dim}>
+              Facebook →
+            </a>
+          </div>
+        </div>
+      </div>
+      <div className="footer-bottom" style={{ borderTop: `1px solid ${C.border}`, paddingTop: 20, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ fontSize: 11, color: C.dim, letterSpacing: "0.08em" }}>© 2026 ΑΣΟΚ — Αθλητικός Σκοπευτικός Όμιλος Καλαμάτας</div>
+        <div style={{ fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: C.dim }}>Est. 1959</div>
+      </div>
+    </footer>
+  );
+}
+
+// ── APP ───────────────────────────────────────────────────────────
+function App() {
+  const [page, setPage] = useState("home");
+  const [lightbox, setLightbox] = useState(null);
+  const openLightbox = (src, label) => setLightbox({ src, label });
+  const closeLightbox = () => setLightbox(null);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [page]);
+
+  const pages = {
+    home:       <HomePage setPage={setPage} openLightbox={openLightbox} />,
+    about:      <AboutPage openLightbox={openLightbox} />,
+    gallery:    <GalleryPage openLightbox={openLightbox} />,
+    announcements: <AnnouncementsPage />,
+    training:   <TrainingPage />,
+  };
+
+  return (
+    <div style={{ minHeight: "100vh" }}>
+      <Nav page={page} setPage={setPage} />
+      {pages[page]}
+      {lightbox && <Lightbox src={lightbox.src} label={lightbox.label} onClose={closeLightbox} />}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
