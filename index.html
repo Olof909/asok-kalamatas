@@ -257,7 +257,7 @@ function Nav({ page, setPage }) {
 
   const links = [
     ["home","ΑΡΧΙΚΗ"],["about","ΣΥΛΛΟΓΟΣ"],["gallery","GALLERY"],
-    ["announcements","ΑΝΑΚΟΙΝΩΣΕΙΣ"],["training","ΠΡΟΓΡΑΜΜΑ"]
+    ["results","ΑΠΟΤΕΛΕΣΜΑΤΑ"],["announcements","ΑΝΑΚΟΙΝΩΣΕΙΣ"],["training","ΠΡΟΓΡΑΜΜΑ"]
   ];
 
   return (
@@ -581,6 +581,163 @@ function GalleryPage({ openLightbox }) {
   );
 }
 
+// ── RESULTS DATA ─────────────────────────────────────────────────
+const COMPETITIONS = [
+  {
+    id: 1,
+    title: "Διασυλλογικός Αγώνας Τραπ",
+    discipline: "Trap 50 Στόχων",
+    date: "17 Μαΐου 2026",
+    location: "Σκοπευτήριο Καλαμάτας",
+    finalRanking: [
+      { place: 1, name: "Αβραμόπουλος Δ.", club: "ΑΣΟΚ", score: 33 },
+      { place: 2, name: "Κατσιβέλης Πετ.", club: "ΑΣΟΓΥ", score: 31 },
+      { place: 3, name: "Τσαούσης Παν.", club: "ΑΣΟΚ", score: 25 },
+      { place: 4, name: "Σταυριανέας Λαμ.", club: "ΑΣΟΚ", score: 21 },
+      { place: 5, name: "Διπλάς Δημ.", club: "ΑΣΟΠΥΡ", score: 15 },
+      { place: 6, name: "Μανεσιώτης Κων.", club: "ΑΡΤΕΜΙΣ", score: 11 },
+    ],
+    categories: [
+      {
+        name: "Κατηγορία Α",
+        athletes: [
+          { place: 1, name: "Κατσιβέλης Πετ.", club: "ΑΣΟΓΥ", r1: 17, r2: 21, total: 38 },
+          { place: 2, name: "Ξυπόλιτος Ιωα.", club: "ΑΣΟΚ", r1: 21, r2: 15, total: 36 },
+        ],
+      },
+      {
+        name: "Κατηγορία Β",
+        athletes: [
+          { place: 1, name: "Σταυριανέας Λαμ.", club: "ΑΣΟΚ", r1: 22, r2: 19, total: 41 },
+          { place: 2, name: "Τσαούσης Παν.", club: "ΑΣΟΚ", r1: 17, r2: 17, total: "34+1" },
+          { place: 3, name: "Διπλάς Δημ.", club: "ΑΣΟΠΥΡ", r1: 17, r2: 17, total: 34 },
+          { place: null, name: "Αβραμόπουλος Δ.", club: "ΑΣΟΚ", r1: 20, r2: 14, total: 34 },
+          { place: null, name: "Γυφτέας Σωτ.", club: "ΑΣΟΚ", r1: 17, r2: 15, total: 32 },
+          { place: null, name: "Μεντζάς Χαρ.", club: "ΑΣΟΚ", r1: 15, r2: 17, total: 32 },
+          { place: null, name: "Μακρής Γεω.", club: "ΑΣΟΚ", r1: 17, r2: 14, total: 31 },
+          { place: null, name: "Καρβούνης Στυ.", club: "ΑΣΟΓΥ", r1: 17, r2: 13, total: 30 },
+          { place: null, name: "Αλειφέρης Παν.", club: "ΑΣΟΚ", r1: 16, r2: 12, total: 28 },
+          { place: null, name: "Κοιλάκος Βασ.", club: "ΑΣΟΓΥ", r1: 14, r2: 13, total: 27 },
+          { place: null, name: "Παπαμικρουλέας Κ.", club: "ΑΣΟΚ", r1: 14, r2: 12, total: 26 },
+          { place: null, name: "Αντωνόπουλος Γεω.", club: "ΑΣΟΚ", r1: 10, r2: 16, total: 26 },
+        ],
+      },
+      {
+        name: "Κατηγορία Γ",
+        athletes: [
+          { place: 1, name: "Μανεσιώτης Κων.", club: "ΑΡΤΕΜΙΣ", r1: 14, r2: 20, total: 34 },
+          { place: 2, name: "Ποθουλάκης Γεω.", club: "ΑΣΟΚ", r1: 13, r2: 13, total: 26 },
+          { place: 3, name: "Γιαννουλάκος Παν.", club: "ΑΣΟΓΥ", r1: 8, r2: 14, total: 22 },
+          { place: null, name: "Γιαννακόπουλος Ν.", club: "ΑΣΟΚ", r1: 12, r2: 9, total: 21 },
+        ],
+      },
+      {
+        name: "Βετεράνοι (BET)",
+        athletes: [
+          { place: 1, name: "Ξυπόλιτος Ιωα.", club: "ΑΣΟΚ", r1: 21, r2: 15, total: 36 },
+          { place: 2, name: "Τσαούσης Παν.", club: "ΑΣΟΚ", r1: 17, r2: 17, total: 34 },
+          { place: null, name: "Μακρής Γεω.", club: "ΑΣΟΚ", r1: 17, r2: 14, total: 31 },
+          { place: null, name: "Καρβούνης Στυ.", club: "ΑΣΟΓΥ", r1: 17, r2: 13, total: 30 },
+          { place: null, name: "Αλειφέρης Παν.", club: "ΑΣΟΚ", r1: 16, r2: 12, total: 28 },
+          { place: null, name: "Κοιλάκος Βασ.", club: "ΑΣΟΓΥ", r1: 14, r2: 13, total: 27 },
+          { place: null, name: "Αντωνόπουλος Γεω.", club: "ΑΣΟΚ", r1: 10, r2: 16, total: 26 },
+        ],
+      },
+    ],
+  },
+];
+
+// ── RESULTS PAGE ──────────────────────────────────────────────────
+function ResultsPage() {
+  const [open, setOpen] = React.useState(0);
+  const comp = COMPETITIONS[open];
+  const placeLabel = { 1: "🥇", 2: "🥈", 3: "🥉" };
+
+  return (
+    <div style={{ paddingTop: 72 }}>
+      {/* Header */}
+      <div style={{ position: "relative", background: C.bg2, padding: "80px clamp(24px,6vw,96px) 64px", overflow: "hidden" }}>
+        <Reticle size={360} opacity={0.06} style={{ right: 0, top: -40 }} />
+        <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.22em", color: C.gold, marginBottom: 16, textTransform: "uppercase" }}>Αγωνιστική Δράση</div>
+        <h1 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(52px,7vw,88px)", lineHeight: 0.92 }}>
+          ΑΠΟΤΕΛΕ<span style={{ color: C.gold }}>ΣΜΑΤΑ</span>
+        </h1>
+      </div>
+
+      <div className="section-padding" style={{ padding: "64px clamp(24px,6vw,96px)" }}>
+        {/* Competition card */}
+        <div style={{ background: C.bg2, borderTop: `3px solid ${C.gold}`, padding: "32px 36px", marginBottom: 3 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, marginBottom: 32 }}>
+            <div>
+              <div style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(26px,3vw,38px)", letterSpacing: "0.04em", lineHeight: 1 }}>{comp.title}</div>
+              <div style={{ fontFamily: "'Bebas Neue'", fontSize: 16, color: C.gold, letterSpacing: "0.08em", marginTop: 4 }}>{comp.discipline}</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontFamily: "'Source Serif 4', serif", fontStyle: "italic", fontSize: 14, color: C.dim }}>{comp.date}</div>
+              <div style={{ fontFamily: "'Source Serif 4', serif", fontSize: 13, color: C.dim, marginTop: 2 }}>{comp.location}</div>
+            </div>
+          </div>
+
+          {/* Final podium */}
+          <div style={{ marginBottom: 36 }}>
+            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.2em", color: C.gold, textTransform: "uppercase", marginBottom: 14 }}>Τελική Κατάταξη</div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+              {comp.finalRanking.map(r => (
+                <div key={r.place} style={{
+                  display: "grid", gridTemplateColumns: "48px 1fr 120px 60px",
+                  alignItems: "center", gap: 12,
+                  padding: "12px 16px",
+                  background: r.place <= 3 ? "rgba(212,169,58,0.08)" : C.bg3,
+                  borderLeft: r.place <= 3 ? `2px solid ${C.gold}` : `2px solid ${C.bg3}`,
+                }}>
+                  <div style={{ fontFamily: "'Bebas Neue'", fontSize: 20, color: r.place <= 3 ? C.gold : C.mid, textAlign: "center" }}>
+                    {placeLabel[r.place] || r.place}
+                  </div>
+                  <div style={{ fontFamily: "'Space Grotesk'", fontSize: 14, fontWeight: 500, color: C.white }}>{r.name}</div>
+                  <div style={{ fontFamily: "'Space Grotesk'", fontSize: 12, color: C.dim }}>{r.club}</div>
+                  <div style={{ fontFamily: "'Bebas Neue'", fontSize: 22, color: C.gold, textAlign: "right" }}>{r.score}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Category tables */}
+          {comp.categories.map(cat => (
+            <div key={cat.name} style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.2em", color: C.gold, textTransform: "uppercase", marginBottom: 10 }}>{cat.name}</div>
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "'Space Grotesk'", fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ borderBottom: `1px solid ${C.border}` }}>
+                      {["Θέση","Αθλητής","Σύλλογος","1η","2η","Σύνολο"].map(h => (
+                        <th key={h} style={{ padding: "8px 10px", textAlign: h === "1η" || h === "2η" || h === "Σύνολο" ? "center" : "left", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: C.dim, fontWeight: 600 }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {cat.athletes.map((a, i) => (
+                      <tr key={i} style={{ borderBottom: `1px solid rgba(212,169,58,0.08)`, background: a.place && a.place <= 3 ? "rgba(212,169,58,0.05)" : "transparent" }}>
+                        <td style={{ padding: "10px 10px", color: a.place ? C.gold : C.dim, fontFamily: "'Bebas Neue'", fontSize: 16 }}>
+                          {a.place ? (placeLabel[a.place] || `${a.place}ος`) : "—"}
+                        </td>
+                        <td style={{ padding: "10px 10px", color: C.white, fontWeight: 500 }}>{a.name}</td>
+                        <td style={{ padding: "10px 10px", color: C.dim }}>{a.club}</td>
+                        <td style={{ padding: "10px 10px", color: C.mid, textAlign: "center" }}>{a.r1}</td>
+                        <td style={{ padding: "10px 10px", color: C.mid, textAlign: "center" }}>{a.r2}</td>
+                        <td style={{ padding: "10px 10px", color: a.place ? C.gold : C.mid, fontFamily: "'Bebas Neue'", fontSize: 18, textAlign: "center" }}>{a.total}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── ANNOUNCEMENTS PAGE ────────────────────────────────────────────
 function AnnouncementsPage() {
   const announcements = [
@@ -772,7 +929,7 @@ function Footer({ setPage }) {
         <div>
           <div style={{ fontSize: 10, letterSpacing: "0.18em", textTransform: "uppercase", color: C.gold, marginBottom: 16 }}>Σελίδες</div>
           <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {[["home","Αρχική"],["about","Σύλλογος"],["gallery","Gallery"],["announcements","Ανακοινώσεις"],["training","Πρόγραμμα"]].map(([k,l]) => (
+            {[["home","Αρχική"],["about","Σύλλογος"],["gallery","Gallery"],["results","Αποτελέσματα"],["announcements","Ανακοινώσεις"],["training","Πρόγραμμα"]].map(([k,l]) => (
               <span key={k} onClick={() => setPage(k)} style={{ fontFamily: "'Space Grotesk'", fontSize: 13, color: C.dim, cursor: "pointer", transition: "color 0.2s" }}
                 onMouseEnter={e => e.currentTarget.style.color = C.gold}
                 onMouseLeave={e => e.currentTarget.style.color = C.dim}>{l}</span>
@@ -816,6 +973,7 @@ function App() {
     home:       <HomePage setPage={setPage} openLightbox={openLightbox} />,
     about:      <AboutPage openLightbox={openLightbox} />,
     gallery:    <GalleryPage openLightbox={openLightbox} />,
+    results:    <ResultsPage />,
     announcements: <AnnouncementsPage />,
     training:   <TrainingPage />,
   };
