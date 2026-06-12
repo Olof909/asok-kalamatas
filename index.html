@@ -133,6 +133,41 @@
     cursor: pointer;
   }
   .nav-mobile-menu.is-open .nav-mobile-link.active { color: #d4a93a; }
+
+  /* ── Event announcement banner ── */
+  @keyframes bannerSlideDown {
+    from { transform: translateY(-100%); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
+  }
+  .event-banner {
+    position: fixed; top: 72px; left: 0; right: 0; z-index: 95;
+    animation: bannerSlideDown 0.6s cubic-bezier(0.22,1,0.36,1) both;
+    background: linear-gradient(90deg, #1a2742 0%, #233354 50%, #1a2742 100%);
+    border-bottom: 1px solid rgba(212,169,58,0.45);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.32);
+  }
+  .event-banner-inner {
+    display: flex; align-items: center; gap: 18px;
+    padding: 11px clamp(20px, 5vw, 72px);
+    max-width: 1400px; margin: 0 auto;
+  }
+  .event-banner-cta {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 8px 18px; border: 1px solid #d4a93a; color: #d4a93a;
+    cursor: pointer; white-space: nowrap; transition: all 0.2s; background: transparent;
+  }
+  .event-banner-cta:hover { background: #d4a93a; color: #111b2e; }
+  .event-banner-close {
+    background: transparent; border: none; color: rgba(244,239,227,0.55);
+    font-size: 22px; line-height: 1; cursor: pointer; padding: 4px 6px; transition: color 0.2s;
+  }
+  .event-banner-close:hover { color: #d4a93a; }
+  @media (max-width: 720px) {
+    .event-banner-inner { gap: 12px; padding: 10px 18px; }
+    .event-banner-text-sub { display: none; }
+    .event-banner-cta { padding: 7px 12px; font-size: 10px; }
+  }
 </style>
 </head>
 <body>
@@ -343,10 +378,48 @@ function Nav({ page, setPage }) {
   );
 }
 
+// ── EVENT BANNER (αρχική) ─────────────────────────────────────────
+function EventBanner({ setPage }) {
+  const announcement = getActiveBannerAnnouncement();
+  const [dismissed, setDismissed] = useState(false);
+  if (!announcement || dismissed) return null;
+
+  const now = new Date();
+  const event = new Date(announcement.eventDate + "T00:00:00");
+  const daysLeft = Math.max(0, Math.ceil((event - now) / (1000 * 60 * 60 * 24)));
+  const countdown = daysLeft === 0 ? "Σήμερα!" : daysLeft === 1 ? "Αύριο" : `σε ${daysLeft} ημέρες`;
+
+  return (
+    <div className="event-banner">
+      <div className="event-banner-inner">
+        <span style={{
+          fontFamily: "'Space Grotesk'", fontSize: 10, fontWeight: 600,
+          letterSpacing: "0.14em", textTransform: "uppercase",
+          color: "#111b2e", background: C.gold, padding: "4px 10px", whiteSpace: "nowrap",
+        }}>{countdown}</span>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <span style={{
+            fontFamily: "'Space Grotesk'", fontSize: 14, fontWeight: 500, color: C.gold,
+          }}>{announcement.title}</span>
+          <span className="event-banner-text-sub" style={{
+            fontFamily: "'Source Serif 4', serif", fontStyle: "italic",
+            fontSize: 13, color: C.mid, marginLeft: 12,
+          }}>· {announcement.date} · Σκοπευτήριο Καλαμάτας</span>
+        </div>
+        <button className="event-banner-cta" onClick={() => setPage("announcements")}>
+          Δείτε περισσότερα →
+        </button>
+        <button className="event-banner-close" aria-label="Κλείσιμο" onClick={() => setDismissed(true)}>×</button>
+      </div>
+    </div>
+  );
+}
+
 // ── HOME PAGE ─────────────────────────────────────────────────────
 function HomePage({ setPage, openLightbox }) {
   return (
     <div>
+      <EventBanner setPage={setPage} />
       {/* Hero */}
       <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", overflow: "hidden" }}>
         {/* BG image (animated Ken Burns) */}
@@ -589,6 +662,86 @@ function GalleryPage({ openLightbox }) {
   );
 }
 
+// ── ANNOUNCEMENTS DATA ───────────────────────────────────────────
+// Πρόσθεσε "eventDate" (μορφή "YYYY-MM-DD") σε μια ανακοίνωση για να
+// εμφανίζεται στο banner της αρχικής σελίδας μέχρι την ημέρα του συμβάντος.
+// Μετά το πέρας της ημερομηνίας το banner φεύγει αυτόματα.
+const ANNOUNCEMENTS = [
+  {
+    date: "28 Ιουνίου 2026",
+    eventDate: "2026-06-28",
+    tag: "Αγώνας",
+    title: "Αγώνας Κυπέλλου Ελλάδος Compak Sporting",
+    body: "Ο Αθλητικός Σκοπευτικός Όμιλος Καλαμάτας (ΑΣΟΚ) ολοκλήρωσε την προετοιμασία των τροχιών για τον Αγώνα Κυπέλλου Ελλάδος Compak Sporting της Κυριακής 28 Ιουνίου 2026. Συμμετοχή όλων των κατηγοριών — βαθμολογούμενος αγώνας Κυπέλλου ΣΚΟΕ — σκοπευτές από όλη την Ελλάδα. Εγγραφές έως 27/06/2026. Σας περιμένουμε στο Σκοπευτήριο Καλαμάτας! Τηλ. Επικοινωνίας: 6972169048 - 6972534881",
+  },
+  {
+    date: "17 Μαΐου 2026",
+    eventDate: "2026-05-17",
+    tag: "Αγώνας",
+    title: "Διασυλλογικός Αγώνας Trap 50 Στόχων",
+    body: "Την Κυριακή 17 Μαΐου 2026 στο Σκοπευτήριο Καλαμάτας διεξάγεται Διασυλλογικός Αγώνας Trap 50 Στόχων. Ώρα Έναρξης: 09:00 π.μ. Κόστος Συμμετοχής: 25€. Πρόγραμμα: Αγώνας Trap 50 στόχων, συμμετοχή αθλητών από συλλόγους, κατάταξη & αποτελέσματα. Έπαθλα: Κύπελλα και μετάλλια στους νικητές. Δηλώσεις Συμμετοχής έως το Σάββατο 16/05/2026 και ώρα 17:00 στα τηλέφωνα: 6972534881 & 6972169048.",
+  },
+  {
+    date: "22 Απριλίου 2026",
+    tag: "Αγώνας",
+    title: "Ακύρωση Διασυλλογικού Αγώνα Compak Sporting",
+    body: "Σας ενημερώνουμε ότι ο προγραμματισμένος διασυλλογικός αγώνας Compak Sporting της Κυριακής 3ης Μαΐου 2026 ακυρώνεται. Ζητούμε την κατανόησή σας και θα ακολουθήσει νέα ενημέρωση για τις επόμενες αγωνιστικές δραστηριότητες του Ομίλου.",
+  },
+  {
+    date: "17 Απριλίου 2026",
+    tag: "Πρόγραμμα",
+    title: "Ωράριο Λειτουργίας Σκοπευτηρίου",
+    body: "Το σκοπευτήριο θα είναι ανοιχτό: Τετάρτη 17:30–21:00, Σάββατο 17:30–21:00, Κυριακή 09:00–15:00. Σας περιμένουμε για προπόνηση και σκοποβολή σε ένα ασφαλές και οργανωμένο περιβάλλον.",
+  },
+  {
+    date: "9 Απριλίου 2026",
+    tag: "Πρόγραμμα",
+    title: "Λειτουργία Μεγάλου Σαββάτου",
+    body: "Το σκοπευτήριο θα είναι ανοιχτό το Μ. Σάββατο 09:00 με 14:00. Σας περιμένουμε.",
+  },
+  {
+    date: "7 Απριλίου 2026",
+    tag: "Πρόγραμμα",
+    title: "Πρόγραμμα Μεγάλης Εβδομάδας",
+    body: "Το σκοπευτήριο θα είναι ανοιχτό: Μεγάλη Τετάρτη 17:00–21:00 και Μεγάλη Πέμπτη 17:00–21:00. Σας περιμένουμε.",
+  },
+  {
+    date: "3 Απριλίου 2026",
+    tag: "Πρόγραμμα",
+    title: "Ανοιχτό Σκοπευτήριο 4–5 Απριλίου",
+    body: "Σάββατο 04/04 17:30–21:00 και Κυριακή 05/04 09:00–15:00 στο Σκοπευτήριο Καλαμάτας. Τηλ. 6972169048.",
+  },
+  {
+    date: "20 Μαρτίου 2026",
+    tag: "Πρόγραμμα",
+    title: "Λειτουργία Σαββατοκύριακου",
+    body: "Το σκοπευτήριο θα είναι ανοικτό το Σάββατο 17:30–19:00 και Κυριακή 09:00–15:00.",
+  },
+  {
+    date: "17 Μαρτίου 2026",
+    tag: "Πρόγραμμα",
+    title: "Προπόνηση Compak Sporting & Trap",
+    body: "Σας περιμένουμε για προπόνηση την Τετάρτη 18-03-2026 17:00–19:00 στο Compak Sporting και στο Trap.",
+  },
+  {
+    date: "15 Μαρτίου 2026",
+    tag: "Εκδήλωση",
+    title: "Προπόνηση με νέο σχήμα Ν.10",
+    body: "Σας περιμένουμε για προπόνηση 09:00–15:00 στο Compak Sporting και στο TRAP με το νέο σχήμα Ν.10.",
+  },
+];
+
+// Επιστρέφει την επόμενη ανακοίνωση-συμβάν που δεν έχει περάσει ακόμα (ή null).
+function getActiveBannerAnnouncement() {
+  const now = new Date();
+  const upcoming = ANNOUNCEMENTS
+    .filter(a => a.eventDate)
+    .map(a => ({ a, end: new Date(a.eventDate + "T23:59:59") }))
+    .filter(x => x.end >= now)
+    .sort((x, y) => x.end - y.end);
+  return upcoming.length ? upcoming[0].a : null;
+}
+
 // ── RESULTS DATA ─────────────────────────────────────────────────
 const COMPETITIONS = [
   {
@@ -748,68 +901,7 @@ function ResultsPage() {
 
 // ── ANNOUNCEMENTS PAGE ────────────────────────────────────────────
 function AnnouncementsPage() {
-  const announcements = [
-    {
-      date: "28 Ιουνίου 2026",
-      tag: "Αγώνας",
-      title: "Αγώνας Κυπέλλου Ελλάδος Compak Sporting",
-      body: "Ο Αθλητικός Σκοπευτικός Όμιλος Καλαμάτας (ΑΣΟΚ) ολοκλήρωσε την προετοιμασία των τροχιών για τον Αγώνα Κυπέλλου Ελλάδος Compak Sporting της Κυριακής 28 Ιουνίου 2026. Συμμετοχή όλων των κατηγοριών — βαθμολογούμενος αγώνας Κυπέλλου ΣΚΟΕ — σκοπευτές από όλη την Ελλάδα. Εγγραφές έως 27/06/2026. Σας περιμένουμε στο Σκοπευτήριο Καλαμάτας! Τηλ. Επικοινωνίας: 6972169048 - 6972534881",
-    },
-    {
-      date: "17 Μαΐου 2026",
-      tag: "Αγώνας",
-      title: "Διασυλλογικός Αγώνας Trap 50 Στόχων",
-      body: "Την Κυριακή 17 Μαΐου 2026 στο Σκοπευτήριο Καλαμάτας διεξάγεται Διασυλλογικός Αγώνας Trap 50 Στόχων. Ώρα Έναρξης: 09:00 π.μ. Κόστος Συμμετοχής: 25€. Πρόγραμμα: Αγώνας Trap 50 στόχων, συμμετοχή αθλητών από συλλόγους, κατάταξη & αποτελέσματα. Έπαθλα: Κύπελλα και μετάλλια στους νικητές. Δηλώσεις Συμμετοχής έως το Σάββατο 16/05/2026 και ώρα 17:00 στα τηλέφωνα: 6972534881 & 6972169048.",
-    },
-    {
-      date: "22 Απριλίου 2026",
-      tag: "Αγώνας",
-      title: "Ακύρωση Διασυλλογικού Αγώνα Compak Sporting",
-      body: "Σας ενημερώνουμε ότι ο προγραμματισμένος διασυλλογικός αγώνας Compak Sporting της Κυριακής 3ης Μαΐου 2026 ακυρώνεται. Ζητούμε την κατανόησή σας και θα ακολουθήσει νέα ενημέρωση για τις επόμενες αγωνιστικές δραστηριότητες του Ομίλου.",
-    },
-    {
-      date: "17 Απριλίου 2026",
-      tag: "Πρόγραμμα",
-      title: "Ωράριο Λειτουργίας Σκοπευτηρίου",
-      body: "Το σκοπευτήριο θα είναι ανοιχτό: Τετάρτη 17:30–21:00, Σάββατο 17:30–21:00, Κυριακή 09:00–15:00. Σας περιμένουμε για προπόνηση και σκοποβολή σε ένα ασφαλές και οργανωμένο περιβάλλον.",
-    },
-    {
-      date: "9 Απριλίου 2026",
-      tag: "Πρόγραμμα",
-      title: "Λειτουργία Μεγάλου Σαββάτου",
-      body: "Το σκοπευτήριο θα είναι ανοιχτό το Μ. Σάββατο 09:00 με 14:00. Σας περιμένουμε.",
-    },
-    {
-      date: "7 Απριλίου 2026",
-      tag: "Πρόγραμμα",
-      title: "Πρόγραμμα Μεγάλης Εβδομάδας",
-      body: "Το σκοπευτήριο θα είναι ανοιχτό: Μεγάλη Τετάρτη 17:00–21:00 και Μεγάλη Πέμπτη 17:00–21:00. Σας περιμένουμε.",
-    },
-    {
-      date: "3 Απριλίου 2026",
-      tag: "Πρόγραμμα",
-      title: "Ανοιχτό Σκοπευτήριο 4–5 Απριλίου",
-      body: "Σάββατο 04/04 17:30–21:00 και Κυριακή 05/04 09:00–15:00 στο Σκοπευτήριο Καλαμάτας. Τηλ. 6972169048.",
-    },
-    {
-      date: "20 Μαρτίου 2026",
-      tag: "Πρόγραμμα",
-      title: "Λειτουργία Σαββατοκύριακου",
-      body: "Το σκοπευτήριο θα είναι ανοικτό το Σάββατο 17:30–19:00 και Κυριακή 09:00–15:00.",
-    },
-    {
-      date: "17 Μαρτίου 2026",
-      tag: "Πρόγραμμα",
-      title: "Προπόνηση Compak Sporting & Trap",
-      body: "Σας περιμένουμε για προπόνηση την Τετάρτη 18-03-2026 17:00–19:00 στο Compak Sporting και στο Trap.",
-    },
-    {
-      date: "15 Μαρτίου 2026",
-      tag: "Εκδήλωση",
-      title: "Προπόνηση με νέο σχήμα Ν.10",
-      body: "Σας περιμένουμε για προπόνηση 09:00–15:00 στο Compak Sporting και στο TRAP με το νέο σχήμα Ν.10.",
-    },
-  ];
+  const announcements = ANNOUNCEMENTS;
 
   const tagColors = {
     "Αγώνας":   C.gold,
