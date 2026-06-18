@@ -195,7 +195,7 @@ const PHOTOS = {
   podium:   "uploads/658150805_1458442105977787_994430311091057490_n.jpg",
   facility: "uploads/475674248_1130037335484934_5739089800326555547_n.jpg",
   poster1:  "uploads/656416811_1453504383138226_301068151431856087_n.jpg",
-  poster2:  "uploads/Στιγμιότυπο οθόνης 2026-06-18 093627.png",
+  poster2:  "uploads/hero-bg-logo.jpg",
   logo:     "uploads/pasted-1777711422017-0.png",
 };
 
@@ -426,8 +426,8 @@ function HomePage({ setPage, openLightbox }) {
         <div className="hero-bg-image" style={{
           position: "absolute", inset: 0,
           backgroundImage: `url(${PHOTOS.poster2})`,
-          backgroundSize: "cover", backgroundPosition: "center top",
-          filter: "brightness(0.22)",
+          backgroundSize: "cover", backgroundPosition: "center center",
+          filter: "brightness(0.9)",
         }} />
         {/* Animated gradient overlay */}
         <div className="hero-bg-overlay" style={{ position: "absolute", inset: 0 }} />
