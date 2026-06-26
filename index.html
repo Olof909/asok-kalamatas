@@ -17,8 +17,6 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
@@ -1077,12 +1075,7 @@ function Footer({ setPage }) {
 function WeatherPage() {
   const [wx, setWx] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [fireTab, setFireTab] = useState(0);
   const [selDay, setSelDay] = useState(0);
-
-  const mapEl = React.useRef(null);
-  const mapObj = React.useRef(null);
-  const wmsRef = React.useRef(null);
 
   useEffect(() => {
     fetch("https://api.open-meteo.com/v1/forecast?latitude=37.0353&longitude=22.1114&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,relative_humidity_2m&hourly=temperature_2m,precipitation_probability,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,sunrise,sunset,uv_index_max&timezone=Europe%2FAthens&forecast_days=7")
@@ -1090,28 +1083,6 @@ function WeatherPage() {
       .then(d => { setWx(d); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);
-
-  // EFFIS forecast layer name for a given day offset (0 = today/analysis)
-  const fireLayerFor = (i) => i === 0 ? "ecmwf.fwi" : "ecmwf.fwi.fc" + i;
-
-  // Init Leaflet map (OSM base + EFFIS fire-danger WMS overlay)
-  useEffect(() => {
-    if (!window.L || !mapEl.current || mapObj.current) return;
-    const map = window.L.map(mapEl.current, { center:[38.5,23.8], zoom:6, scrollWheelZoom:false });
-    window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:"© OpenStreetMap", maxZoom:12,
-    }).addTo(map);
-    const wms = window.L.tileLayer.wms("https://ies-ows.jrc.ec.europa.eu/effis", {
-      layers: fireLayerFor(0), format:"image/png", transparent:true, opacity:0.55, version:"1.1.1",
-    }).addTo(map);
-    mapObj.current = map; wmsRef.current = wms;
-    return () => { map.remove(); mapObj.current = null; wmsRef.current = null; };
-  }, []);
-
-  // Update fire overlay when the day tab changes
-  useEffect(() => {
-    if (wmsRef.current) wmsRef.current.setParams({ layers: fireLayerFor(fireTab) });
-  }, [fireTab]);
 
   const WMO = {
     0:"Αίθριος",1:"Κυρίως αίθριος",2:"Μερ. συννεφιά",3:"Συννεφιά",
@@ -1126,16 +1097,6 @@ function WeatherPage() {
   };
   const DAYS = ["Κυρ","Δευ","Τρί","Τετ","Πέμ","Παρ","Σάβ"];
   const MONTHS = ["Ιαν","Φεβ","Μαρ","Απρ","Μαΐ","Ιουν","Ιουλ","Αυγ","Σεπ","Οκτ","Νοε","Δεκ"];
-  const FIRE_LEGEND = [
-    ["Πολύ Χαμηλός","#2b9348"],["Χαμηλός","#80b918"],["Μέτριος","#ffd60a"],
-    ["Υψηλός","#fb8500"],["Πολύ Υψηλός","#e63946"],["Ακραίος","#9d0208"],
-  ];
-
-  // Fire danger map day tabs (today + next 4 days)
-  const fireDays = Array.from({length:5},(_,i)=>{
-    const d = new Date(); d.setDate(d.getDate()+i);
-    return { label: i===0?"Σήμερα": i===1?"Αύριο": DAYS[d.getDay()]+" "+d.getDate()+"/"+(d.getMonth()+1) };
-  });
 
   // Hourly slices for the selected forecast day
   const hourlyForSel = () => {
@@ -1259,57 +1220,6 @@ function WeatherPage() {
             </div>
           </>
         )}
-
-        {/* Fire danger section */}
-        <div style={{ marginTop:16 }}>
-          <div style={{ fontSize:11, fontWeight:600, letterSpacing:"0.22em", color:C.gold, textTransform:"uppercase", marginBottom:16 }}>Χάρτης Κινδύνου Πυρκαγιάς · Ελλάδα (EFFIS)</div>
-          <h2 style={{ fontFamily:"'Bebas Neue'", fontSize:"clamp(32px,4vw,52px)", marginBottom:24 }}>
-            ΠΡΟΒΛΕΨΗ <span style={{ color:C.gold }}>ΚΙΝΔΥΝΟΥ</span> ΠΥΡΚΑΓΙΑΣ
-          </h2>
-
-          {/* Day tabs */}
-          <div style={{ display:"flex", gap:4, marginBottom:0, flexWrap:"wrap" }}>
-            {fireDays.map((fd,i)=>(
-              <button key={i} onClick={()=>setFireTab(i)} style={{
-                fontFamily:"'Space Grotesk'", fontSize:12, fontWeight:600,
-                letterSpacing:"0.1em", textTransform:"uppercase",
-                padding:"10px 20px",
-                background: fireTab===i ? C.gold : C.bg2,
-                color: fireTab===i ? C.bg : C.mid,
-                border: `1px solid ${fireTab===i ? C.gold : C.border}`,
-                cursor:"pointer", transition:"all 0.15s",
-              }}>{fd.label}</button>
-            ))}
-          </div>
-
-          {/* Leaflet map: OSM base + EFFIS fire-danger overlay */}
-          <div ref={mapEl} style={{ width:"100%", height:560, border:`1px solid ${C.border}`, background:C.bg2 }} />
-
-          {/* Legend */}
-          <div style={{ display:"flex", gap:18, flexWrap:"wrap", marginTop:14 }}>
-            {FIRE_LEGEND.map(([label,col])=>(
-              <div key={label} style={{ display:"flex", alignItems:"center", gap:7 }}>
-                <span style={{ width:16, height:16, background:col, borderRadius:3, display:"inline-block" }} />
-                <span style={{ fontFamily:"'Space Grotesk'", fontSize:12, color:C.mid }}>{label}</span>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ marginTop:16, display:"flex", gap:12, flexWrap:"wrap" }}>
-            <a href="https://civilprotection.gr/el/fire-risk" target="_blank" rel="noreferrer" style={{
-              fontFamily:"'Space Grotesk'", fontSize:12, fontWeight:600, letterSpacing:"0.12em",
-              textTransform:"uppercase", padding:"10px 22px",
-              border:`1px solid ${C.gold}`, color:C.gold, textDecoration:"none",
-              transition:"all 0.2s", display:"inline-block",
-            }}>Πολιτική Προστασία →</a>
-            <a href="https://effis.jrc.ec.europa.eu/applications/firenews/" target="_blank" rel="noreferrer" style={{
-              fontFamily:"'Space Grotesk'", fontSize:12, fontWeight:600, letterSpacing:"0.12em",
-              textTransform:"uppercase", padding:"10px 22px",
-              border:`1px solid ${C.border}`, color:C.mid, textDecoration:"none",
-              transition:"all 0.2s", display:"inline-block",
-            }}>EFFIS Χάρτες →</a>
-          </div>
-        </div>
       </div>
     </div>
   );
