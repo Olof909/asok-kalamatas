@@ -299,7 +299,7 @@ function Nav({ page, setPage }) {
 
   const links = [
     ["home","ΑΡΧΙΚΗ"],["about","ΣΥΛΛΟΓΟΣ"],["gallery","GALLERY"],
-    ["results","ΑΠΟΤΕΛΕΣΜΑΤΑ"],["announcements","ΑΝΑΚΟΙΝΩΣΕΙΣ"],["training","ΠΡΟΓΡΑΜΜΑ"]
+    ["results","ΑΠΟΤΕΛΕΣΜΑΤΑ"],["announcements","ΑΝΑΚΟΙΝΩΣΕΙΣ"],["training","ΠΡΟΓΡΑΜΜΑ"],["weather","ΚΑΙΡΟΣ"]
   ];
 
   return (
@@ -1071,6 +1071,163 @@ function Footer({ setPage }) {
   );
 }
 
+// ── WEATHER PAGE ─────────────────────────────────────────────────
+function WeatherPage() {
+  const [wx, setWx] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [fireTab, setFireTab] = useState(0);
+
+  useEffect(() => {
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=37.0353&longitude=22.1114&current=temperature_2m,apparent_temperature,weather_code,wind_speed_10m,wind_direction_10m,relative_humidity_2m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&timezone=Europe%2FAthens&forecast_days=7")
+      .then(r => r.json())
+      .then(d => { setWx(d); setLoading(false); })
+      .catch(() => setLoading(false));
+  }, []);
+
+  const WMO = {
+    0:"Αίθριος",1:"Κυρίως αίθριος",2:"Μερ. συννεφιά",3:"Συννεφιά",
+    45:"Ομίχλη",48:"Ομίχλη",51:"Ψιλόβροχο",53:"Ψιλόβροχο",55:"Ψιλόβροχο",
+    61:"Βροχή",63:"Βροχή",65:"Έντονη βροχή",71:"Χιόνι",73:"Χιόνι",75:"Χιόνι",
+    80:"Ντους",81:"Ντους",82:"Ισχυρός ντους",95:"Καταιγίδα",96:"Καταιγίδα",99:"Καταιγίδα",
+  };
+  const ICON = {
+    0:"☀",1:"🌤",2:"⛅",3:"☁",45:"🌫",48:"🌫",
+    51:"🌦",53:"🌦",55:"🌦",61:"🌧",63:"🌧",65:"🌧",
+    71:"🌨",73:"🌨",75:"❄",80:"🌦",81:"🌦",82:"⛈",95:"⛈",96:"⛈",99:"⛈",
+  };
+  const DAYS = ["Κυρ","Δευ","Τρί","Τετ","Πέμ","Παρ","Σάβ"];
+  const MONTHS = ["Ιαν","Φεβ","Μαρ","Απρ","Μαΐ","Ιουν","Ιουλ","Αυγ","Σεπ","Οκτ","Νοε","Δεκ"];
+
+  // Fire danger map days (today + next 4 days) from EFFIS
+  const fireDays = Array.from({length:5},(_,i)=>{
+    const d = new Date(); d.setDate(d.getDate()+i);
+    return { label: i===0?"Σήμερα": i===1?"Αύριο": DAYS[d.getDay()]+" "+d.getDate()+"/"+d.getMonth(), d };
+  });
+
+  // EFFIS fire danger WMS image URL for Greece bounding box
+  const effisUrl = (dayOffset) => {
+    const d = new Date(); d.setDate(d.getDate()+dayOffset);
+    const pad = n => String(n).padStart(2,"0");
+    const ds = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    return `https://effis.jrc.ec.europa.eu/mapserver/?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&BBOX=19.3,34.8,29.7,42.0&CRS=CRS:84&WIDTH=900&HEIGHT=600&LAYERS=fwi_d${dayOffset}&STYLES=&FORMAT=image/png&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=FALSE&TIME=${ds}`;
+  };
+
+  return (
+    <div style={{ paddingTop: 72, minHeight: "100vh", background: C.bg }}>
+      {/* Header */}
+      <div style={{ position:"relative", background: C.bg2, padding:"80px clamp(24px,6vw,96px) 64px", overflow:"hidden" }}>
+        <Reticle size={360} opacity={0.06} style={{ right:0, top:-40 }} />
+        <div style={{ fontSize:11, fontWeight:600, letterSpacing:"0.22em", color:C.gold, marginBottom:16, textTransform:"uppercase" }}>Καλαμάτα · Μεσσηνία</div>
+        <h1 style={{ fontFamily:"'Bebas Neue'", fontSize:"clamp(52px,7vw,88px)", lineHeight:0.92 }}>
+          ΠΡΟ<span style={{ color:C.gold }}>ΓΝΩΣΗ</span> ΚΑΙΡΟΥ
+        </h1>
+      </div>
+
+      <div style={{ padding:"48px clamp(24px,6vw,96px)" }}>
+        {loading && <p style={{ color:C.mid, fontFamily:"'Space Grotesk'" }}>Φόρτωση δεδομένων...</p>}
+
+        {wx && (
+          <>
+            {/* Current weather card */}
+            <div style={{ display:"flex", gap:32, flexWrap:"wrap", marginBottom:48 }}>
+              <div style={{ flex:"1 1 320px", background:C.bg2, border:`1px solid ${C.border}`, padding:36 }}>
+                <div style={{ fontSize:11, fontWeight:600, letterSpacing:"0.2em", textTransform:"uppercase", color:C.gold, marginBottom:20 }}>Τωρινός Καιρός · Καλαμάτα</div>
+                <div style={{ display:"flex", alignItems:"center", gap:20, marginBottom:24 }}>
+                  <span style={{ fontSize:72, lineHeight:1 }}>{ICON[wx.current.weather_code]||"☀"}</span>
+                  <div>
+                    <div style={{ fontFamily:"'Bebas Neue'", fontSize:80, lineHeight:1, color:C.light }}>{Math.round(wx.current.temperature_2m)}°</div>
+                    <div style={{ fontFamily:"'Space Grotesk'", fontSize:14, color:C.mid, marginTop:4 }}>{WMO[wx.current.weather_code]||"—"}</div>
+                  </div>
+                </div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:"10px 24px", fontFamily:"'Space Grotesk'", fontSize:13 }}>
+                  {[
+                    ["Αίσθηση", Math.round(wx.current.apparent_temperature)+"°"],
+                    ["Υγρασία", wx.current.relative_humidity_2m+"%"],
+                    ["Άνεμος", Math.round(wx.current.wind_speed_10m)+" km/h"],
+                    ["Κατεύθυνση", wx.current.wind_direction_10m+"°"],
+                  ].map(([k,v])=>(
+                    <div key={k}>
+                      <div style={{ color:C.dim, fontSize:11, letterSpacing:"0.1em", textTransform:"uppercase", marginBottom:2 }}>{k}</div>
+                      <div style={{ color:C.light, fontWeight:500 }}>{v}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* 7-day forecast */}
+              <div style={{ flex:"2 1 400px", display:"flex", flexDirection:"column", gap:3 }}>
+                {wx.daily.time.map((t,i)=>{
+                  const d = new Date(t+"T12:00:00");
+                  const label = i===0?"Σήμερα":i===1?"Αύριο":DAYS[d.getDay()]+" "+d.getDate()+" "+MONTHS[d.getMonth()];
+                  return (
+                    <div key={t} style={{ display:"flex", alignItems:"center", gap:16, background:i===0?C.bg2:"transparent", border:`1px solid ${i===0?C.gold:C.border}`, padding:"14px 20px" }}>
+                      <span style={{ fontSize:28, minWidth:36 }}>{ICON[wx.daily.weather_code[i]]||"☀"}</span>
+                      <div style={{ fontFamily:"'Space Grotesk'", fontSize:13, color:C.mid, flex:1, minWidth:100 }}>{label}</div>
+                      <div style={{ fontFamily:"'Space Grotesk'", fontSize:13, color:"#6aabff", minWidth:40 }}>{wx.daily.precipitation_probability_max[i]}%</div>
+                      <div style={{ fontFamily:"'Bebas Neue'", fontSize:20, color:C.light, minWidth:60, textAlign:"right" }}>
+                        {Math.round(wx.daily.temperature_2m_max[i])}° <span style={{ color:C.dim, fontSize:16 }}>{Math.round(wx.daily.temperature_2m_min[i])}°</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Fire danger section */}
+        <div style={{ marginTop:16 }}>
+          <div style={{ fontSize:11, fontWeight:600, letterSpacing:"0.22em", color:C.gold, textTransform:"uppercase", marginBottom:16 }}>Χάρτης Κινδύνου Πυρκαγιάς · Ελλάδα (EFFIS)</div>
+          <h2 style={{ fontFamily:"'Bebas Neue'", fontSize:"clamp(32px,4vw,52px)", marginBottom:24 }}>
+            ΠΡΟΒΛΕΨΗ <span style={{ color:C.gold }}>ΚΙΝΔΥΝΟΥ</span> ΠΥΡΚΑΓΙΑΣ
+          </h2>
+
+          {/* Day tabs */}
+          <div style={{ display:"flex", gap:4, marginBottom:0, flexWrap:"wrap" }}>
+            {fireDays.map((fd,i)=>(
+              <button key={i} onClick={()=>setFireTab(i)} style={{
+                fontFamily:"'Space Grotesk'", fontSize:12, fontWeight:600,
+                letterSpacing:"0.1em", textTransform:"uppercase",
+                padding:"10px 20px",
+                background: fireTab===i ? C.gold : C.bg2,
+                color: fireTab===i ? C.bg : C.mid,
+                border: `1px solid ${fireTab===i ? C.gold : C.border}`,
+                cursor:"pointer", transition:"all 0.15s",
+              }}>{fd.label}</button>
+            ))}
+          </div>
+
+          {/* Map iframe */}
+          <div style={{ border:`1px solid ${C.border}`, background:C.bg2 }}>
+            <iframe
+              key={fireTab}
+              src={`https://effis.jrc.ec.europa.eu/applications/firenews/?date_offset=${fireTab}`}
+              style={{ width:"100%", height:560, border:"none", display:"block" }}
+              title="Χάρτης κινδύνου πυρκαγιάς"
+              loading="lazy"
+            />
+          </div>
+
+          <div style={{ marginTop:16, display:"flex", gap:12, flexWrap:"wrap" }}>
+            <a href="https://civilprotection.gr/el/fire-risk" target="_blank" rel="noreferrer" style={{
+              fontFamily:"'Space Grotesk'", fontSize:12, fontWeight:600, letterSpacing:"0.12em",
+              textTransform:"uppercase", padding:"10px 22px",
+              border:`1px solid ${C.gold}`, color:C.gold, textDecoration:"none",
+              transition:"all 0.2s", display:"inline-block",
+            }}>Πολιτική Προστασία →</a>
+            <a href="https://effis.jrc.ec.europa.eu/applications/firenews/" target="_blank" rel="noreferrer" style={{
+              fontFamily:"'Space Grotesk'", fontSize:12, fontWeight:600, letterSpacing:"0.12em",
+              textTransform:"uppercase", padding:"10px 22px",
+              border:`1px solid ${C.border}`, color:C.mid, textDecoration:"none",
+              transition:"all 0.2s", display:"inline-block",
+            }}>EFFIS Χάρτες →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── APP ───────────────────────────────────────────────────────────
 function App() {
   const [page, setPage] = useState("home");
@@ -1089,6 +1246,7 @@ function App() {
     results:    <ResultsPage />,
     announcements: <AnnouncementsPage />,
     training:   <TrainingPage />,
+    weather:    <WeatherPage />,
   };
 
   return (
