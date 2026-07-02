@@ -415,11 +415,107 @@ function EventBanner({ setPage }) {
   );
 }
 
+// ── POSTER SLIDESHOW (αρχική, πάνω πάνω) ─────────────────────────
+// Δείχνει τις αφίσες των επερχόμενων αγώνων (ανακοινώσεις με poster +
+// eventDate που δεν έχει περάσει). Φεύγει αυτόματα μετά το συμβάν.
+function PosterSlideshow({ setPage, openLightbox }) {
+  const now = new Date();
+  const posters = ANNOUNCEMENTS.filter(a =>
+    a.poster && a.eventDate && new Date(a.eventDate + "T23:59:59") >= now
+  );
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    if (posters.length < 2) return;
+    const t = setInterval(() => setIdx(i => (i + 1) % posters.length), 6000);
+    return () => clearInterval(t);
+  }, [posters.length]);
+
+  if (!posters.length) return null;
+  const a = posters[idx % posters.length];
+
+  return (
+    <section style={{
+      position: "relative", background: C.bg2,
+      padding: "150px clamp(24px,6vw,96px) 56px",
+      borderBottom: `1px solid ${C.border}`, overflow: "hidden",
+    }}>
+      <Reticle size={420} opacity={0.05} style={{ left: -120, bottom: -140 }} />
+      <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative" }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{ fontSize: 11, fontWeight: 600, letterSpacing: "0.24em", color: C.gold, textTransform: "uppercase", marginBottom: 12 }}>
+            Επόμενος Αγώνας
+          </div>
+          <h2 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(28px,4vw,48px)", lineHeight: 1.05 }}>
+            {a.title}
+          </h2>
+          <div style={{ fontFamily: "'Source Serif 4', serif", fontStyle: "italic", fontSize: 15, color: C.mid, marginTop: 8 }}>
+            {a.date} · Σκοπευτήριο Καλαμάτας
+          </div>
+        </div>
+
+        <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center" }}>
+          {posters.length > 1 && (
+            <button onClick={() => setIdx(i => (i - 1 + posters.length) % posters.length)} aria-label="Προηγούμενο" style={{
+              position: "absolute", left: 0, zIndex: 2,
+              background: "rgba(17,27,46,0.75)", border: `1px solid ${C.gold}`, color: C.gold,
+              fontSize: 22, width: 44, height: 44, cursor: "pointer",
+            }}>‹</button>
+          )}
+          <img
+            src={a.poster}
+            alt={a.title}
+            onClick={() => openLightbox ? openLightbox(a.poster, a.title) : setPage("announcements")}
+            style={{
+              maxWidth: "100%", maxHeight: "72vh", display: "block",
+              border: `1px solid ${C.border}`, cursor: "zoom-in",
+              boxShadow: "0 24px 64px rgba(0,0,0,0.45)",
+            }}
+          />
+          {posters.length > 1 && (
+            <button onClick={() => setIdx(i => (i + 1) % posters.length)} aria-label="Επόμενο" style={{
+              position: "absolute", right: 0, zIndex: 2,
+              background: "rgba(17,27,46,0.75)", border: `1px solid ${C.gold}`, color: C.gold,
+              fontSize: 22, width: 44, height: 44, cursor: "pointer",
+            }}>›</button>
+          )}
+        </div>
+
+        {posters.length > 1 && (
+          <div style={{ display: "flex", justifyContent: "center", gap: 10, marginTop: 20 }}>
+            {posters.map((_, i) => (
+              <span key={i} onClick={() => setIdx(i)} style={{
+                width: 10, height: 10, borderRadius: "50%", cursor: "pointer",
+                background: i === idx ? C.gold : "transparent",
+                border: `1.5px solid ${C.gold}`, transition: "background 0.2s",
+              }} />
+            ))}
+          </div>
+        )}
+
+        <div style={{ textAlign: "center", marginTop: 28 }}>
+          <button onClick={() => setPage("announcements")} style={{
+            fontFamily: "'Space Grotesk'", fontSize: 12, fontWeight: 600,
+            letterSpacing: "0.14em", textTransform: "uppercase",
+            padding: "12px 28px", border: `1px solid ${C.gold}`,
+            background: "transparent", color: C.gold, cursor: "pointer", transition: "all 0.2s",
+          }}
+            onMouseEnter={e => { e.currentTarget.style.background = C.gold; e.currentTarget.style.color = C.bg; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = C.gold; }}>
+            Περισσότερες Πληροφορίες →
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ── HOME PAGE ─────────────────────────────────────────────────────
 function HomePage({ setPage, openLightbox }) {
   return (
     <div>
       <EventBanner setPage={setPage} />
+      <PosterSlideshow setPage={setPage} openLightbox={openLightbox} />
       {/* Hero */}
       <section style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", overflow: "hidden" }}>
         {/* BG image (animated Ken Burns) */}
@@ -668,6 +764,14 @@ function GalleryPage({ openLightbox }) {
 // Μετά το πέρας της ημερομηνίας το banner φεύγει αυτόματα.
 const ANNOUNCEMENTS = [
   {
+    date: "25 Ιουνίου 2026",
+    eventDate: "2026-07-05",
+    tag: "Αγώνας",
+    title: "Αγώνας Κυπέλλου Ελλάδος ΤΡΑΠ Β' Γ' 125 Στόχων",
+    poster: "uploads/poster-trap-bg-125-2026.jpg",
+    body: "Το Σάββατο 4 & την Κυριακή 5 Ιουλίου 2026 στο Σκοπευτήριο Καλαμάτας διεξάγεται Αγώνας Κυπέλλου Ελλάδος ΤΡΑΠ Β' Γ' 125 Στόχων. Ώρα Έναρξης: 08:00 π.μ. Κατηγορίες: Α, Γ, Ε, Ν. Συμμετοχή: 60€. Προπονήσεις: Πέμπτη 02/07/2026 17:30–21:00 και Παρασκευή 03/07/2026 09:00–15:00. Δηλώσεις Συμμετοχής έως την Παρασκευή 03/07/2026 στις 15:00. Πληροφορίες: 6972169048 & 6972534881 · www.asokalamatas.gr · asokalamatas1@gmail.com",
+  },
+  {
     date: "22 Ιουνίου 2026",
     eventDate: "2026-06-28",
     tag: "Πρόγραμμα",
@@ -907,7 +1011,7 @@ function ResultsPage() {
 }
 
 // ── ANNOUNCEMENTS PAGE ────────────────────────────────────────────
-function AnnouncementsPage() {
+function AnnouncementsPage({ openLightbox }) {
   const announcements = ANNOUNCEMENTS;
 
   const tagColors = {
@@ -952,6 +1056,11 @@ function AnnouncementsPage() {
             <div>
               <h3 style={{ fontFamily: "'Bebas Neue'", fontSize: "clamp(22px,2.5vw,30px)", letterSpacing: "0.04em", marginBottom: 12, lineHeight: 1.1 }}>{a.title}</h3>
               <p style={{ fontFamily: "'Source Serif 4', serif", fontSize: 15, color: C.mid, lineHeight: 1.75 }}>{a.body}</p>
+              {a.poster && (
+                <img src={a.poster} alt={a.title}
+                  onClick={() => openLightbox && openLightbox(a.poster, a.title)}
+                  style={{ maxWidth: 340, width: "100%", marginTop: 18, border: `1px solid ${C.border}`, cursor: "zoom-in", display: "block" }} />
+              )}
             </div>
           </div>
         ))}
@@ -1241,7 +1350,7 @@ function App() {
     about:      <AboutPage openLightbox={openLightbox} />,
     gallery:    <GalleryPage openLightbox={openLightbox} />,
     results:    <ResultsPage />,
-    announcements: <AnnouncementsPage />,
+    announcements: <AnnouncementsPage openLightbox={openLightbox} />,
     training:   <TrainingPage />,
     weather:    <WeatherPage />,
   };
