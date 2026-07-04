@@ -856,6 +856,62 @@ function getActiveBannerAnnouncement() {
 // ── RESULTS DATA ─────────────────────────────────────────────────
 const COMPETITIONS = [
   {
+    id: 2,
+    title: "Αγώνας Κυπέλλου ΣΚΟΕ Τραπ Β' Γ'",
+    discipline: "Trap 125 Στόχων",
+    date: "4–5 Ιουλίου 2026",
+    location: "Σκοπευτήριο Καλαμάτας",
+    note: "Αποτελέσματα 1ης Ημέρας — Σάββατο 4/7/2026. Η τελική κατάταξη θα ανακοινωθεί μετά την ολοκλήρωση της 2ης ημέρας.",
+    categories: [
+      {
+        name: "Κατηγορία Α",
+        athletes: [
+          { place: null, name: "Οικονόμου Αλε.", club: "ΣΟΨ", r1: 17, r2: 21, r3: 18, total: 56 },
+          { place: null, name: "Κατσιβέλης Πετ.", club: "ΑΣΟΓΥ", r1: 19, r2: 20, r3: 14, total: 53 },
+          { place: null, name: "Ξυπόλιτος Ιωα.", club: "ΑΣΟΚ", r1: "–", r2: "–", r3: "–", total: "–" },
+        ],
+      },
+      {
+        name: "Κατηγορία Β",
+        athletes: [
+          { place: null, name: "Αβραμόπουλος Δ.", club: "ΑΣΟΚ", r1: 23, r2: 18, r3: 21, total: 62 },
+          { place: null, name: "Μεντζάς Χαρ.", club: "ΑΣΟΚ", r1: 17, r2: 20, r3: 21, total: 58 },
+          { place: null, name: "Παπαμικρουλέας Κ.", club: "ΑΣΟΚ", r1: 17, r2: 21, r3: 19, total: 57 },
+          { place: null, name: "Γυφτέας Σωτ.", club: "ΑΣΟΚ", r1: 15, r2: 19, r3: 19, total: 53 },
+          { place: null, name: "Διπλάς Δημ.", club: "ΑΣΟΠΥΡ", r1: 19, r2: 15, r3: 18, total: 52 },
+          { place: null, name: "Σταυριανέας Λαμ.", club: "ΑΣΟΚ", r1: 19, r2: 14, r3: 17, total: 50 },
+          { place: null, name: "Τσαούσης Παν.", club: "ΑΣΟΚ", r1: 18, r2: 14, r3: 16, total: 48 },
+          { place: null, name: "Ξυπόλιτος Δημ.", club: "ΑΣΟΚ", r1: 15, r2: 15, r3: 15, total: 45 },
+          { place: null, name: "Αλειφέρης Παν.", club: "ΑΣΟΚ", r1: 12, r2: 12, r3: 18, total: 42 },
+          { place: null, name: "Χριστόφορος Παν.", club: "ΑΡΤΕΜΙΣ", r1: 15, r2: "–", r3: "–", total: "–" },
+        ],
+      },
+      {
+        name: "Κατηγορία Γ",
+        athletes: [
+          { place: null, name: "Αντωνόπουλος Γεω.", club: "ΑΣΟΚ", r1: 16, r2: 14, r3: 18, total: 48 },
+          { place: null, name: "Γιαννακόπουλος Ευ.", club: "ΑΣΟΚ", r1: 15, r2: 14, r3: 17, total: 46 },
+          { place: null, name: "Γιαννακόπουλος Ν.", club: "ΑΣΟΚ", r1: 15, r2: 16, r3: 12, total: 43 },
+          { place: null, name: "Ποθουλάκης Γεω.", club: "ΑΣΟΚ", r1: 13, r2: 13, r3: 17, total: 43 },
+          { place: null, name: "Καλογερόπουλος Α.", club: "ΑΣΟΚ", r1: 15, r2: 16, r3: 10, total: 41 },
+        ],
+      },
+      {
+        name: "Βετεράνοι (BET)",
+        athletes: [
+          { place: null, name: "Μεντζάς Χαρ.", club: "ΑΣΟΚ", r1: 17, r2: 20, r3: 21, total: 58 },
+          { place: null, name: "Παπαμικρουλέας Κ.", club: "ΑΣΟΚ", r1: 17, r2: 21, r3: 19, total: 57 },
+          { place: null, name: "Διπλάς Δημ.", club: "ΑΣΟΠΥΡ", r1: 19, r2: 15, r3: 18, total: 52 },
+          { place: null, name: "Τσαούσης Παν.", club: "ΑΣΟΚ", r1: 18, r2: 14, r3: 16, total: 48 },
+          { place: null, name: "Αντωνόπουλος Γεω.", club: "ΑΣΟΚ", r1: 16, r2: 14, r3: 18, total: 48 },
+          { place: null, name: "Γιαννακόπουλος Ευ.", club: "ΑΣΟΚ", r1: 15, r2: 14, r3: 17, total: 46 },
+          { place: null, name: "Αλειφέρης Παν.", club: "ΑΣΟΚ", r1: 12, r2: 12, r3: 18, total: 42 },
+          { place: null, name: "Ξυπόλιτος Ιωα.", club: "ΑΣΟΚ", r1: "–", r2: "–", r3: "–", total: "–" },
+        ],
+      },
+    ],
+  },
+  {
     id: 1,
     title: "Διασυλλογικός Αγώνας Τραπ",
     discipline: "Trap 50 Στόχων",
@@ -937,6 +993,26 @@ function ResultsPage() {
       </div>
 
       <div className="section-padding" style={{ padding: "64px clamp(24px,6vw,96px)" }}>
+        {/* Competition selector */}
+        {COMPETITIONS.length > 1 && (
+          <div style={{ display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 24 }}>
+            {COMPETITIONS.map((c, i) => (
+              <button key={c.id} onClick={() => setOpen(i)} style={{
+                fontFamily: "'Space Grotesk'", fontSize: 12, fontWeight: 600,
+                letterSpacing: "0.08em", textTransform: "uppercase",
+                padding: "12px 20px", textAlign: "left",
+                background: open === i ? C.gold : C.bg2,
+                color: open === i ? C.bg : C.mid,
+                border: `1px solid ${open === i ? C.gold : C.border}`,
+                cursor: "pointer", transition: "all 0.15s",
+              }}>
+                {c.title}
+                <span style={{ display: "block", fontSize: 10, fontWeight: 400, opacity: 0.75, marginTop: 2, textTransform: "none", letterSpacing: "0.02em" }}>{c.date}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Competition card */}
         <div style={{ background: C.bg2, borderTop: `3px solid ${C.gold}`, padding: "32px 36px", marginBottom: 3 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12, marginBottom: 32 }}>
@@ -950,39 +1026,54 @@ function ResultsPage() {
             </div>
           </div>
 
+          {/* Note (π.χ. ενδιάμεσα αποτελέσματα) */}
+          {comp.note && (
+            <div style={{
+              fontFamily: "'Source Serif 4', serif", fontStyle: "italic", fontSize: 14,
+              color: C.gold, background: "rgba(212,169,58,0.08)",
+              border: `1px solid rgba(212,169,58,0.3)`, padding: "14px 18px", marginBottom: 32,
+            }}>{comp.note}</div>
+          )}
+
           {/* Final podium */}
-          <div style={{ marginBottom: 36 }}>
-            <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.2em", color: C.gold, textTransform: "uppercase", marginBottom: 14 }}>Τελική Κατάταξη</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-              {comp.finalRanking.map(r => (
-                <div key={r.place} style={{
-                  display: "grid", gridTemplateColumns: "48px 1fr 120px 60px",
-                  alignItems: "center", gap: 12,
-                  padding: "12px 16px",
-                  background: r.place <= 3 ? "rgba(212,169,58,0.08)" : C.bg3,
-                  borderLeft: r.place <= 3 ? `2px solid ${C.gold}` : `2px solid ${C.bg3}`,
-                }}>
-                  <div style={{ fontFamily: "'Bebas Neue'", fontSize: 20, color: r.place <= 3 ? C.gold : C.mid, textAlign: "center" }}>
-                    {placeLabel[r.place] || r.place}
+          {comp.finalRanking && (
+            <div style={{ marginBottom: 36 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.2em", color: C.gold, textTransform: "uppercase", marginBottom: 14 }}>Τελική Κατάταξη</div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                {comp.finalRanking.map(r => (
+                  <div key={r.place} style={{
+                    display: "grid", gridTemplateColumns: "48px 1fr 120px 60px",
+                    alignItems: "center", gap: 12,
+                    padding: "12px 16px",
+                    background: r.place <= 3 ? "rgba(212,169,58,0.08)" : C.bg3,
+                    borderLeft: r.place <= 3 ? `2px solid ${C.gold}` : `2px solid ${C.bg3}`,
+                  }}>
+                    <div style={{ fontFamily: "'Bebas Neue'", fontSize: 20, color: r.place <= 3 ? C.gold : C.mid, textAlign: "center" }}>
+                      {placeLabel[r.place] || r.place}
+                    </div>
+                    <div style={{ fontFamily: "'Space Grotesk'", fontSize: 14, fontWeight: 500, color: C.white }}>{r.name}</div>
+                    <div style={{ fontFamily: "'Space Grotesk'", fontSize: 12, color: C.dim }}>{r.club}</div>
+                    <div style={{ fontFamily: "'Bebas Neue'", fontSize: 22, color: C.gold, textAlign: "right" }}>{r.score}</div>
                   </div>
-                  <div style={{ fontFamily: "'Space Grotesk'", fontSize: 14, fontWeight: 500, color: C.white }}>{r.name}</div>
-                  <div style={{ fontFamily: "'Space Grotesk'", fontSize: 12, color: C.dim }}>{r.club}</div>
-                  <div style={{ fontFamily: "'Bebas Neue'", fontSize: 22, color: C.gold, textAlign: "right" }}>{r.score}</div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Category tables */}
-          {comp.categories.map(cat => (
+          {comp.categories.map(cat => {
+            const hasR3 = cat.athletes.some(a => a.r3 !== undefined);
+            const headers = ["Θέση","Αθλητής","Σύλλογος","1η","2η"].concat(hasR3 ? ["3η"] : []).concat(["Σύνολο"]);
+            const centered = ["1η","2η","3η","Σύνολο"];
+            return (
             <div key={cat.name} style={{ marginBottom: 28 }}>
               <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.2em", color: C.gold, textTransform: "uppercase", marginBottom: 10 }}>{cat.name}</div>
               <div style={{ overflowX: "auto" }}>
                 <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "'Space Grotesk'", fontSize: 13 }}>
                   <thead>
                     <tr style={{ borderBottom: `1px solid ${C.border}` }}>
-                      {["Θέση","Αθλητής","Σύλλογος","1η","2η","Σύνολο"].map(h => (
-                        <th key={h} style={{ padding: "8px 10px", textAlign: h === "1η" || h === "2η" || h === "Σύνολο" ? "center" : "left", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: C.dim, fontWeight: 600 }}>{h}</th>
+                      {headers.map(h => (
+                        <th key={h} style={{ padding: "8px 10px", textAlign: centered.includes(h) ? "center" : "left", fontSize: 10, letterSpacing: "0.14em", textTransform: "uppercase", color: C.dim, fontWeight: 600 }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -996,6 +1087,7 @@ function ResultsPage() {
                         <td style={{ padding: "10px 10px", color: C.dim }}>{a.club}</td>
                         <td style={{ padding: "10px 10px", color: C.mid, textAlign: "center" }}>{a.r1}</td>
                         <td style={{ padding: "10px 10px", color: C.mid, textAlign: "center" }}>{a.r2}</td>
+                        {hasR3 && <td style={{ padding: "10px 10px", color: C.mid, textAlign: "center" }}>{a.r3}</td>}
                         <td style={{ padding: "10px 10px", color: a.place ? C.gold : C.mid, fontFamily: "'Bebas Neue'", fontSize: 18, textAlign: "center" }}>{a.total}</td>
                       </tr>
                     ))}
@@ -1003,7 +1095,8 @@ function ResultsPage() {
                 </table>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
