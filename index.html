@@ -732,11 +732,16 @@ function AboutPage({ openLightbox }) {
 // ── GALLERY PAGE ──────────────────────────────────────────────────
 function GalleryPage({ openLightbox }) {
   const images = [
-    { src: PHOTOS.team,     pos: "center 40%", label: "Αθλητές στο Σκοπευτήριο", span: 2 },
+    { src: "uploads/trap-bg-2026-awards-all.jpg",    pos: "center 55%", label: "Απονομές — Κύπελλο ΣΚΟΕ Τραπ Β'Γ' 2026", span: 2 },
+    { src: "uploads/trap-bg-2026-podium-b.jpg",      pos: "center 55%", label: "Βάθρο — Κύπελλο ΣΚΟΕ Τραπ Β'Γ' 2026" },
+    { src: "uploads/trap-bg-2026-podium-vet.jpg",    pos: "center 55%", label: "Βάθρο Βετεράνων — Τραπ Β'Γ' 2026" },
+    { src: "uploads/trap-bg-2026-podium-group.jpg",  pos: "center 55%", label: "Οι νικητές του αγώνα — Τραπ Β'Γ' 2026" },
+    { src: "uploads/trap-bg-2026-athletes-line.jpg", pos: "center 60%", label: "Οι αθλητές του αγώνα — Τραπ Β'Γ' 2026" },
+    { src: PHOTOS.team,     pos: "center 40%", label: "Αθλητές στο Σκοπευτήριο" },
     { src: PHOTOS.podium,   pos: "center 25%", label: "Βραβεύσεις" },
     { src: PHOTOS.facility, pos: "center center", label: "Αεροφωτογραφία Σκοπευτηρίου" },
     { src: PHOTOS.poster1,  pos: "center top", label: "Αγώνας Trap 50 Στόχων" },
-    { src: PHOTOS.poster2,  pos: "center top", label: "Compak Sporting 100 Στόχων" },
+    { src: "uploads/658700724_1455300156291982_1557183907099408215_n.jpg", pos: "center top", label: "Compak Sporting 100 Στόχων" },
   ];
 
   return (
@@ -862,6 +867,13 @@ const COMPETITIONS = [
     date: "4–5 Ιουλίου 2026",
     location: "Σκοπευτήριο Καλαμάτας",
     note: "Τελικά αποτελέσματα — Ο αγώνας ολοκληρώθηκε με επιτυχία στις 4 & 5 Ιουλίου 2026. Θερμά συγχαρητήρια σε όλους τους αθλητές για τη συμμετοχή και το υψηλό επίπεδο που παρουσίασαν καθ' όλη τη διάρκεια του διημέρου.",
+    photos: [
+      { src: "uploads/trap-bg-2026-podium-b.jpg",      label: "Βάθρο του αγώνα" },
+      { src: "uploads/trap-bg-2026-podium-vet.jpg",    label: "Βάθρο Βετεράνων" },
+      { src: "uploads/trap-bg-2026-podium-group.jpg",  label: "Οι νικητές του αγώνα" },
+      { src: "uploads/trap-bg-2026-awards-all.jpg",    label: "Απονομές" },
+      { src: "uploads/trap-bg-2026-athletes-line.jpg", label: "Οι αθλητές του αγώνα" },
+    ],
     categories: [
       {
         name: "Κατηγορία Α",
@@ -975,7 +987,7 @@ const COMPETITIONS = [
 ];
 
 // ── RESULTS PAGE ──────────────────────────────────────────────────
-function ResultsPage() {
+function ResultsPage({ openLightbox }) {
   const [open, setOpen] = React.useState(0);
   const comp = COMPETITIONS[open];
   const placeLabel = { 1: "🥇", 2: "🥈", 3: "🥉" };
@@ -1103,6 +1115,23 @@ function ResultsPage() {
             </div>
             );
           })}
+
+          {/* Φωτογραφίες αγώνα */}
+          {comp.photos && (
+            <div style={{ marginTop: 8 }}>
+              <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: "0.2em", color: C.gold, textTransform: "uppercase", marginBottom: 14 }}>Στιγμιότυπα Αγώνα</div>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 3 }}>
+                {comp.photos.map(ph => (
+                  <div key={ph.src} onClick={() => openLightbox && openLightbox(ph.src, ph.label)} style={{ position: "relative", cursor: "zoom-in", overflow: "hidden" }}>
+                    <img src={ph.src} alt={ph.label} loading="lazy" style={{ width: "100%", height: 180, objectFit: "cover", objectPosition: "center 45%", display: "block", transition: "transform 0.3s" }}
+                      onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
+                      onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"} />
+                    <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, padding: "18px 12px 10px", background: "linear-gradient(transparent, rgba(17,27,46,0.85))", fontFamily: "'Space Grotesk'", fontSize: 11, color: C.light, pointerEvents: "none" }}>{ph.label}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -1448,7 +1477,7 @@ function App() {
     home:       <HomePage setPage={setPage} openLightbox={openLightbox} />,
     about:      <AboutPage openLightbox={openLightbox} />,
     gallery:    <GalleryPage openLightbox={openLightbox} />,
-    results:    <ResultsPage />,
+    results:    <ResultsPage openLightbox={openLightbox} />,
     announcements: <AnnouncementsPage openLightbox={openLightbox} />,
     training:   <TrainingPage />,
     weather:    <WeatherPage />,
