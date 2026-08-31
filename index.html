@@ -868,6 +868,61 @@ function getActiveBannerAnnouncement() {
 // ── RESULTS DATA ─────────────────────────────────────────────────
 const COMPETITIONS = [
   {
+    id: 3,
+    title: "Διασυλλογικός Αγώνας Τραπ",
+    discipline: "Trap 100 Στόχων",
+    date: "30 Αυγούστου 2026",
+    location: "Σκοπευτήριο Καλαμάτας",
+    note: "Τελικά αποτελέσματα. Συγχαρητήρια σε όλους τους αθλητές για τη συμμετοχή τους!",
+    categories: [
+      {
+        name: "Κατηγορία Α",
+        athletes: [
+          { place: 1, name: "Οικονόμου Αλε.", club: "ΣΟΨ", r1: 19, r2: 20, r3: 19, r4: 22, total: 80, final: 43 },
+          { place: 2, name: "Ξυπόλιτος Ιωα.", club: "ΑΣΟΚ", r1: 20, r2: 20, r3: 19, r4: 19, total: 78, final: 22 },
+          { place: 3, name: "Κατσιβέλης Πετ.", club: "ΑΣΟΓΥ", r1: 15, r2: 16, r3: 19, r4: 19, total: 69 },
+        ],
+      },
+      {
+        name: "Κατηγορία Β",
+        athletes: [
+          { place: 1, name: "Διπλάς Δημ.", club: "ΑΣΟΠΥΡ", r1: 20, r2: 22, r3: 18, r4: 20, total: 80, final: 14 },
+          { place: 2, name: "Μεντζάς Χαρ.", club: "ΑΣΟΚ", r1: 16, r2: 20, r3: 20, r4: 18, total: 74, final: 18 },
+          { place: 3, name: "Σταυριανέας Λαμ.", club: "ΑΣΟΚ", r1: 19, r2: 22, r3: 17, r4: 16, total: 74, final: 40 },
+          { place: null, name: "Αβραμόπουλος Δ.", club: "ΑΣΟΚ", r1: 17, r2: 21, r3: 15, r4: 19, total: 72 },
+          { place: null, name: "Καρμίρης Αρι.", club: "ΑΣΟΚ", r1: 17, r2: 16, r3: 17, r4: 22, total: 72, final: 11 },
+          { place: null, name: "Μπαρίκος Νικ.", club: "ΑΣΟΓΥ", r1: 13, r2: 17, r3: 17, r4: 22, total: 69 },
+          { place: null, name: "Τσαούσης Παν.", club: "ΑΣΟΚ", r1: 16, r2: 16, r3: 17, r4: 14, total: 63 },
+          { place: null, name: "Ξυπόλιτος Δημ.", club: "ΑΣΟΚ", r1: 13, r2: 17, r3: 16, r4: 15, total: 61 },
+          { place: null, name: "Γυφτέας Σωτ.", club: "ΑΣΟΚ", r1: 13, r2: 12, r3: 18, r4: 16, total: 59 },
+          { place: null, name: "Αλειφέρης Παν.", club: "ΑΣΟΚ", r1: 13, r2: 12, r3: 13, r4: 13, total: 51 },
+        ],
+      },
+      {
+        name: "Κατηγορία Γ",
+        athletes: [
+          { place: 1, name: "Σκληκας Κων.", club: "ΑΣΟΚ", r1: 14, r2: 22, r3: 14, r4: 14, total: 64 },
+          { place: 2, name: "Ποθουλάκης Γεω.", club: "ΑΣΟΚ", r1: 16, r2: 20, r3: 13, r4: 13, total: 62 },
+          { place: 3, name: "Γιαννακόπουλος Ευ.", club: "ΑΣΟΚ", r1: 15, r2: 11, r3: 18, r4: 14, total: 58 },
+          { place: null, name: "Γιαννακόπουλος Ν.", club: "ΑΣΟΚ", r1: 12, r2: 14, r3: 10, r4: 13, total: 49 },
+        ],
+      },
+      {
+        name: "Βετεράνοι (BET)",
+        athletes: [
+          { place: 1, name: "Διπλάς Δημ.", club: "ΑΣΟΠΥΡ", r1: 20, r2: 22, r3: 18, r4: 20, total: 80 },
+          { place: 2, name: "Ξυπόλιτος Ιωα.", club: "ΑΣΟΚ", r1: 20, r2: 20, r3: 19, r4: 19, total: 78 },
+          { place: 3, name: "Μεντζάς Χαρ.", club: "ΑΣΟΚ", r1: 16, r2: 20, r3: 20, r4: 18, total: 74 },
+          { place: null, name: "Καρμίρης Αρι.", club: "ΑΣΟΚ", r1: 17, r2: 16, r3: 17, r4: 22, total: 69 },
+          { place: null, name: "Γιαννακόπουλος Ευ.", club: "ΑΣΟΚ", r1: 15, r2: 11, r3: 18, r4: 14, total: 64 },
+          { place: null, name: "Τσαούσης Παν.", club: "ΑΣΟΚ", r1: 16, r2: 16, r3: 17, r4: 14, total: 63 },
+          { place: null, name: "Ξυπόλιτος Δημ.", club: "ΑΣΟΚ", r1: 13, r2: 17, r3: 16, r4: 15, total: 61 },
+          { place: null, name: "Αλειφέρης Παν.", club: "ΑΣΟΚ", r1: 13, r2: 12, r3: 13, r4: 13, total: 51 },
+        ],
+      },
+    ],
+  },
+  {
     id: 2,
     title: "Αγώνας Κυπέλλου ΣΚΟΕ Τραπ Β' Γ'",
     discipline: "Trap 125 Στόχων",
